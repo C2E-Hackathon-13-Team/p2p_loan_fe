@@ -17,7 +17,8 @@ const b = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
  * 5. A有4个代币，B有6个代币
  */
 export function useContract(){
-    const {provider,connector,account} = useWeb3React();
+    // const {provider,connector,account} = useWeb3React();
+    const {provider} = useWeb3React();
     const [balance, setBalance] = useState(0);
     const [balanceb, setBalanceb] = useState(0);
     const [voteRes, setvoteRes] = useState([]);

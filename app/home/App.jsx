@@ -1,17 +1,17 @@
 // import './App.css'
 import { useWeb3React } from '@web3-react/core';
 import { useEffect } from 'react';
-import { useContract } from '../useContract';
-import { Input, label, Button, Tooltip } from "antd";
-import StarBackground from '../particles/ParticleBackground';
+// import { useContract } from '../useContract';
+// import { Input, label, Button, Tooltip } from "antd";
+// import StarBackground from '../particles/ParticleBackground';
 
 function App() {
-  const { isActive, account,  connector,  provider } = useWeb3React();
-  const {approve,transfer,balanceOf,balance, balanceb} = useContract();
+  const {  account,  connector,  provider } = useWeb3React();
+  // const {approve,transfer,balanceOf,balance, balanceb} = useContract();
   useEffect(()=>{
     setTimeout(()=>{
       const active = connector.activate();
-      active.then((r)=>{
+      active.then(()=>{
         // console.log("active",r);
       })
     },1000)
@@ -19,7 +19,7 @@ function App() {
 
   return (
     <>
-    <StarBackground/>
+    {/* <StarBackground/> */}
     </>
     // <>账户连接状态：
     // {isActive ? ('active') : ('not active')}

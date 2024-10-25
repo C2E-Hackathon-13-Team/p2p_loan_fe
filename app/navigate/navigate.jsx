@@ -27,9 +27,9 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from "./navigate.module.css"; // 确保路径正确
 import { UserOutlined } from '@ant-design/icons';
-import { Avatar, Space, Button, Flex } from 'antd';
+import { Avatar,  Button, Flex } from 'antd';
 import { useWeb3React } from '@web3-react/core';
-import { useContract } from '../useContract';
+// import { useContract } from '../useContract';
 
 export default function Navigate() {
     const [activeIndex, setActiveIndex] = useState(0); // 假设默认首页是激活的
@@ -58,7 +58,7 @@ export default function Navigate() {
 
     // 连接钱包
     const { isActive, account,  connector,  provider } = useWeb3React();
-    const {approve,transfer,balanceOf,balance, balanceb} = useContract();
+    // const {approve,transfer,balanceOf,balance, balanceb} = useContract();
     useEffect(()=>{
       setTimeout(()=>{
         const active = connector.activate();
