@@ -1,0 +1,14 @@
+.logoarea {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    color: white;
+  }
+  
+  .img {
+    margin-left: 23px;
+  }
+  
+  .menu_title_content {
+    color: white;
+  }

@@ -14,7 +14,7 @@
     font-weight: bold;
 }
 
-.nav-list {
+.navList {
     display: flex;
     list-style: none;
     padding: 0;
@@ -23,18 +23,23 @@
     justify-content: center; /* 使列表项居中 */
 }
 
-.nav-list li {
+.navList li {
     margin: 0 10px;
 }
 
-.nav-list li a {
+.navList li p {
     color: #FFF;
     text-decoration: none;
     font-size: 18px;
     padding: 10px;
 }
 
-.nav-list li a:hover {
+.navList li p:hover {
     background-color: #FFF;
     color: #333;
+}
+
+.activeLink {
+    background-color: hsl(73, 65%, 72%);
+    color: hwb(0 4% 96%);
 }

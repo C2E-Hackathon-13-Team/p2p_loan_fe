@@ -1,7 +1,7 @@
 // import './App.css'
 import { useWeb3React } from '@web3-react/core';
 import { useEffect } from 'react';
-import { useContract } from './useContract';
+import { useContract } from '../useContract';
 import { Input, label, Button, Tooltip } from "antd";
 
 function App() {

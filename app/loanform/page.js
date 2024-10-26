@@ -10,7 +10,6 @@ import { Web3Provider } from '../Web3Provider.jsx'
 import { useContract } from '../useContract';
 import Navigate from '../navigate/navigate';
 import Head from 'next/head';
-import Header from '../navigate2/navigate';
 
 
 function Vote_o() {
@@ -36,7 +35,6 @@ function Vote_o() {
   
     return (
         <Web3Provider>
-
             <Navigate/>
         <div className={styles.page}>
         <main className={styles.main}>
