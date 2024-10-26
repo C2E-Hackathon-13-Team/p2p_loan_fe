@@ -3,6 +3,7 @@ import { useWeb3React } from '@web3-react/core';
 import { useEffect } from 'react';
 import { useContract } from '../useContract';
 import { Input, label, Button, Tooltip } from "antd";
+import StarBackground from '../particles/ParticleBackground';
 
 function App() {
   const { isActive, account,  connector,  provider } = useWeb3React();
@@ -11,13 +12,15 @@ function App() {
     setTimeout(()=>{
       const active = connector.activate();
       active.then((r)=>{
-        console.log("active",r);
+        // console.log("active",r);
       })
     },1000)
   },[provider,connector,account])
 
   return (
-    <></>
+    <>
+    <StarBackground/>
+    </>
     // <>账户连接状态：
     // {isActive ? ('active') : ('not active')}
     // <Button onClick={async ()=>{

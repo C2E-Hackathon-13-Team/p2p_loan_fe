@@ -62,8 +62,8 @@ export default function Navigate() {
     useEffect(()=>{
       setTimeout(()=>{
         const active = connector.activate();
-        active.then((r)=>{
-          console.log("active",r);
+        active.then(()=>{
+          console.log("active", isActive);
         })
       },1000)
     },[provider,connector,account])

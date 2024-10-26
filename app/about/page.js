@@ -9,7 +9,7 @@ import { Input, label, Button, Tooltip } from "antd";
 import { Web3Provider } from '../Web3Provider.jsx'
 import { useContract } from '../useContract';
 import Navigate from '../navigate/navigate';
-
+import StarBackground from '../particles/ParticleBackground';
 
 
 function Vote_o() {
@@ -20,6 +20,8 @@ function Vote_o() {
     const { isActive, account,  connector,  provider } = useWeb3React();
     const {approve, addCandidate, vote, getAllCandidates, voteRes} = useContract();
 
+
+    
     const ListComponent = ({ data }) => {  
         console.log("处理数据：", data)
         // 假设data是一个数组，包含你想要展示的数据  
@@ -39,8 +41,9 @@ function Vote_o() {
         <div className={styles.page}>
         <main className={styles.main}>
 
+        <StarBackground/>
+            <h1 >Loan</h1>
 
-            <h1>Loan</h1>
             <label>
             Web3 P2P借贷平台是一种基于Web3技术和区块链的去中心化金融服务平台，它结合了P2P借贷和Web3技术的优势，为用户提供了更加安全、透明和高效的借贷服务。
 

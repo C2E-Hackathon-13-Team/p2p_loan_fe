@@ -19,6 +19,7 @@ import { useContract } from '../useContract';
 import Navigate from '../navigate/navigate';
 import Head from 'next/head';
 import useCounterStore from '../../store/useStore';
+import StarBackground from '../particles/ParticleBackground';
 
 
 const columns = [
@@ -140,6 +141,7 @@ function Vote_o() {
       const { count, increment, decrement } = useCounterStore();
     return (
         <Web3Provider>
+          <StarBackground/>
             <Navigate/>
         <div className={styles.page}>
         <main className={styles.main}>

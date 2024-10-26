@@ -48,13 +48,7 @@
   margin-bottom: 8px;
 }
 
-.main code {
-  font-family: inherit;
-  background: var(--gray-alpha-100);
-  padding: 2px 4px;
-  border-radius: 4px;
-  font-weight: 600;
-}
+
 
 .ctas {
   display: flex;
@@ -163,3 +157,4 @@ a.secondary {
     filter: invert();
   }
 }
+
