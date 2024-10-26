@@ -1,5 +1,5 @@
 import React from 'react';
-import './ParticleBackground.css';
+import './ParticleBackground.module.css';
 
 const StarBackground = () => {
   const generateStars = (amount) => {

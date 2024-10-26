@@ -1,24 +1,15 @@
 "use client"
 
-import React, { useState, useEffect } from 'react';
-import { useWeb3React } from '@web3-react/core';
+import React, { useState } from 'react';
 
-import { Input, label, Button, Tooltip, Table, Tag, Space,
-    Cascader,
-    DatePicker,
+import { Input,  Button,  Table, Tag, Space,
     Form,
-    InputNumber,
-    Radio,
-    Select,
-    Switch,
-    TreeSelect } from "antd";
-import Link from "next/link";
+    Radio
+     } from "antd";
 import styles from "./page.module.css";
 import { Web3Provider } from '../Web3Provider.jsx'
 import { useContract } from '../useContract';
 import Navigate from '../navigate/navigate';
-import Head from 'next/head';
-import useCounterStore from '../../store/useStore';
 import StarBackground from '../particles/ParticleBackground';
 
 
@@ -98,21 +89,21 @@ function Vote_o() {
 
     const [theAddress, settheAddress] = useState("");
     const [pid, setpid] = useState(0);
-    const { isActive, account,  connector,  provider } = useWeb3React();
-    const { createProject, getLaunchProjects, launchProjects, voteRes} = useContract();
+    // const { createProject, getLaunchProjects, launchProjects} = useContract();
+    const { createProject, getLaunchProjects } = useContract();
 
-    const ListComponent = ({ data }) => {  
-        console.log("处理数据：", data)
-        // 假设data是一个数组，包含你想要展示的数据  
-        return (  
-          <div>  
-            {data.map((item, index) => (  
-              // 为数组中的每个元素生成一个<div>元素  
-              <div key={index}>{item.name} : {item.voteCount.toString()}  票</div>  
-            ))}  
-          </div>  
-        );  
-      }; 
+    // const ListComponent = ({ data }) => {  
+    //     console.log("处理数据：", data)
+    //     // 假设data是一个数组，包含你想要展示的数据  
+    //     return (  
+    //       <div>  
+    //         {data.map((item, index) => (  
+    //           // 为数组中的每个元素生成一个<div>元素  
+    //           <div key={index}>{item.name} : {item.voteCount.toString()}  票</div>  
+    //         ))}  
+    //       </div>  
+    //     );  
+    //   }; 
 
       // 筹款 表单
       const [componentSize, setComponentSize] = useState('default');
@@ -138,13 +129,12 @@ function Vote_o() {
       //   }} 
 
       // zustand data
-      const { count, increment, decrement } = useCounterStore();
     return (
         <Web3Provider>
-          <StarBackground/>
             <Navigate/>
         <div className={styles.page}>
         <main className={styles.main}>
+          <StarBackground/>
 
             <h1>Loan Platform</h1>
             <Table columns={columns} dataSource={data} />
