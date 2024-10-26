@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Input,  Button,  Table, Tag, Space,
+import { Input,  Button,  Table, Tag, Space, Col, Row, Divider,
     Form,
     Radio
      } from "antd";
@@ -132,9 +132,13 @@ const columns = [
         await createProject(values.amount, values.rate, values.term, values.endtime, values.repayMethod);
       };
 
+      setTimeout(() => {
+        getAllProjects();
+      }, 1000);
+
       useEffect(() => {
         getAllProjects();
-    }, []);
+      }, []);
 
       useEffect(() => {
         console.log("allProjects: ", allProjects, data);
@@ -153,24 +157,56 @@ const columns = [
             <Navigate/>
 
           {/* <StarBackground/> */}
-
-            <h1>Loan Platform</h1>
+          <Row>
+          <Col span={1}>
+            </Col>
+            <Col span={23}>
+              <h1>Loan Platform</h1>
+  
             <Table columns={columns} dataSource={data} />
+            </Col>
+            </Row>
+
+          <Row>
+          <Col span={22}></Col>
+            <Col span={1}>
+
             <Button 
                         onClick={
-                            async ()=>{
-                              console.log("theAddress to solidity : ", projectsPid)
-                                await getAllProjects();
+                          async ()=>{
+                            console.log("theAddress to solidity : ", projectsPid)
+                            await getAllProjects();
                             }} 
-                        type="primary" size="middle">
+                            type="primary" size="middle">
                         刷新列表
                     
             </Button>
+              </Col>
+            </Row>
             
         {/* <div className={styles.page}> */}
         {/* <main className={styles.main}> */}
             {/* // 表单 */}
-            <p>提交筹款信息：</p>
+            <Row>
+          <Col span={2}></Col>
+            <Col span={5}>
+            <Divider 
+            orientation="left"  
+            style={{
+            borderColor: '#7cb305',
+            }}>
+            <h3>提交筹款信息</h3>
+            </Divider>
+
+            </Col>
+            </Row>
+
+            <Row>
+          <Col span={1}></Col>
+            <Col span={23}>
+           
+   
+
             <Form
                 labelCol={{
                     span: 4,
@@ -238,7 +274,8 @@ const columns = [
                     <Button color="primary" variant="outlined" htmlType="submit">Commit</Button>
                 </Form.Item>
                 </Form>
-
+                </Col>
+            </Row>
 
 {/*   
                     查看项目详细信息。控制台输出
