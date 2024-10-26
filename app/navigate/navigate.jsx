@@ -49,6 +49,7 @@ export default function Navigate() {
         2: "/",
         3: "/about",
         4: "/",
+        5: "/me"
       };
 
     const handleLinkClick = (index) => {
@@ -73,7 +74,7 @@ export default function Navigate() {
         <nav className={styles.navbar}>
             <div className={styles.brandTitle}>P2P Loan Platform</div>
             <ul className={styles.navList}>
-                {["首页", "筹款广场", "交易大厅", "关于我们", "公告"].map((item, index) => (
+                {["首页", "筹款广场", "交易大厅", "关于我们", "公告", "我的"].map((item, index) => (
                     <li key={index}>
                         <Link href={linksMap[index]}>
                             < p
