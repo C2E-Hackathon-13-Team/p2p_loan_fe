@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Input,  Button,  Table, Tag, Space,
     Form,
@@ -14,12 +14,12 @@ import Navigate from '../navigate/navigate';
 
 
 const columns = [
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-      render: (text) => <a>{text}</a>,
-    },
+    // {
+    //   title: 'Name',
+    //   dataIndex: 'name',
+    //   key: 'name',
+    //   render: (text) => <a>{text}</a>,
+    // },
     {
       title: 'Fundraising Amount',
       dataIndex: 'amount',
@@ -31,24 +31,54 @@ const columns = [
       key: 'rate',
     },
     {
+      title: 'Interest term',
+      dataIndex: 'term',
+      key: 'term',
+    },
+    {
       title: 'Status',
       key: 'status',
       dataIndex: 'status',
-      render: (_, { status }) => (
-        <>
-          {status.map((tag) => {
-            let color = tag.length > 5 ? 'geekblue' : 'green';
-            if (tag === 'loser') {
-              color = 'volcano';
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      ),
+      // render: (_, { status }) => (
+      //   <>
+      //     {status.map((tag) => {
+      //       let color = tag.length > 5 ? 'geekblue' : 'green';
+      //       if (tag === 'loser') {
+      //         color = 'volcano';
+      //       }
+      //       return (
+      //         <Tag color={color} key={tag}>
+      //           {tag.toUpperCase()}
+      //         </Tag>
+      //       );
+      //     })}
+      //   </>
+      // ),
+    },
+    {
+      title: 'CollectEndTime',
+      dataIndex: 'collectEndTime',
+      key: 'collectEndTime',
+    },
+    {
+      title: 'collected',
+      dataIndex: 'collected',
+      key: 'collected',
+    },
+    {
+      title: 'currentBill',
+      dataIndex: 'currentBill',
+      key: 'currentBill',
+    },
+    {
+      title: 'launcher',
+      dataIndex: 'launcher',
+      key: 'launcher',
+    },
+    {
+      title: 'repayMethod',
+      dataIndex: 'repayMethod',
+      key: 'repayMethod',
     },
     {
       title: 'Action',
@@ -61,37 +91,16 @@ const columns = [
       ),
     },
   ];
-  const data = [
-    {
-      key: '1',
-      name: 'John Brown',
-      amount: 1000,
-      rate: '1%',
-      status: ['nice', 'developer'],
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      amount: 3000,
-      rate: '1.5%',
-      status: ['loser'],
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      amount: 20000,
-      rate: '0.9%',
-      status: ['cool', 'teacher'],
-    },
-  ];
 
-function Vote_o() {
-
+  
+  function Vote_o() {
+    
     const [theAddress, settheAddress] = useState("");
     const [pid, setpid] = useState(0);
     const [projectsPid, setprojectsPid] = useState(0);
+    const [data, setdata] = useState([]);
     // const { createProject, getLaunchProjects, launchProjects} = useContract();
-    const { createProject, getLaunchProjects, getProjects } = useContract();
+    const { createProject, getLaunchProjects, getProjects, getAllProjects, allProjects } = useContract();
 
     // const ListComponent = ({ data }) => {  
     //     console.log("处理数据：", data)
@@ -122,7 +131,16 @@ function Vote_o() {
         console.log('Received values of form: ', values); // 处理表单数据
         await createProject(values.amount, values.rate, values.term, values.endtime, values.repayMethod);
       };
-    
+
+      useEffect(() => {
+        getAllProjects();
+    }, []);
+
+      useEffect(() => {
+        console.log("allProjects: ", allProjects, data);
+        setdata(allProjects);
+      }, [allProjects]);
+
       // onClick={
       //   async ()=>{
       //       console.log(candidateName)
@@ -133,14 +151,24 @@ function Vote_o() {
     return (
         <Web3Provider>
             <Navigate/>
-        <div className={styles.page}>
-        <main className={styles.main}>
+
           {/* <StarBackground/> */}
 
             <h1>Loan Platform</h1>
             <Table columns={columns} dataSource={data} />
-
-
+            <Button 
+                        onClick={
+                            async ()=>{
+                              console.log("theAddress to solidity : ", projectsPid)
+                                await getAllProjects();
+                            }} 
+                        type="primary" size="middle">
+                        刷新列表
+                    
+            </Button>
+            
+        {/* <div className={styles.page}> */}
+        {/* <main className={styles.main}> */}
             {/* // 表单 */}
             <p>提交筹款信息：</p>
             <Form
@@ -212,30 +240,7 @@ function Vote_o() {
                 </Form>
 
 
-                查看项目id。控制台输出
-                    <Input
-                        type="text"
-                        value={theAddress}
-                        onChange={(e) => settheAddress(e.target.value)}
-                        className={styles.input}
-                    />
-                        <Input
-                        type="text"
-                        value={pid}
-                        onChange={(e) => setpid(e.target.value)}
-                        className={styles.input}
-                    />
-                        <Button 
-                        onClick={
-                            async ()=>{
-                              console.log("theAddress to solidity : ", theAddress)
-                                await getLaunchProjects(theAddress, pid);
-                            }} 
-                        type="primary" size="middle">
-                        查看项目池LaunchProjects
-                    
-                    </Button>
-
+{/*   
                     查看项目详细信息。控制台输出
                     <Input
                         type="text"
@@ -252,9 +257,12 @@ function Vote_o() {
                         type="primary" size="middle">
                         查看单个项目Projects
                     
-                    </Button>
-        </main>
-        </div>
+                    </Button> */}
+
+                  
+                  
+        {/* </main> */}
+        {/* </div> */}
         </Web3Provider>
     )  
 }

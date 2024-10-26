@@ -3,13 +3,15 @@ import { Contract} from '@ethersproject/contracts';
 import ABI from '../artifacts/contracts/GLD.sol/LockModule#Loan.json';
 import { useWeb3React } from '@web3-react/core';
 import { useState, useEffect } from 'react';
-const tokenAddress = '0xA51926D9B32622ee286cCfB41dBb53FB962E074E';
+// const tokenAddress = '0xA51926D9B32622ee286cCfB41dBb53FB962E074E';
+const tokenAddress = '0xf5C6D6A6ea3C3d344B0c61929dCf871C6E4e1FaF';
 
 export function useContract(){
     const {provider, account} = useWeb3React();
     // const [balance, setBalance] = useState(0);
     // const [balanceb, setBalanceb] = useState(0);
     const [launchProjects, setlaunchProjects] = useState("");
+    const [allProjects, setallProjects] = useState("");
     const [Projects, setProjects] = useState({
         amount: 0,
         rate: 0,
@@ -97,12 +99,43 @@ export function useContract(){
         setProjects(formattedrs);
     }
 
+    // 获取所有项目信息
+    const getAllProjects = async ()=>{
+        console.log("getAllProjects", " in useContract.js")
+        const signer = provider.getSigner();
+        if(!provider){
+            return;
+        }
+        const contract = new Contract(tokenAddress, ABI.abi, signer);
+        const rs = await contract.getAllProjects();
+
+        console.log("rs:", rs, rs.toString());
+        const formatted = rs.map((a, index) => {
+            return {
+                amount: a.amount.toString(),
+                rate: a.rate.toString(),
+                term: a.term.toString(),
+                collectEndTime: a.collectEndTime.toString(),
+                repayMethod: a.repayMethod.toString(),
+                status: a.status.toString(),
+                launcher: a.launcher.toString(),
+                collected: a.collected.toString(),
+                currentBill: a.currentBill.toString(),
+                key: (index + 1).toString()
+            };
+        });
+        console.log("formatted: ", formatted);
+        setallProjects(formatted);
+    }
+
     return {
         createProject,
         getLaunchProjects,
         launchProjects,
         getProjects,
-        Projects
+        Projects,
+        getAllProjects,
+        allProjects
 
     }
 }
