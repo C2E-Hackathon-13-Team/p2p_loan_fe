@@ -221,7 +221,7 @@ function Vote_o() {
                 </Form>
 
 
-               投票 ： 填写候选者ID，点击投票;
+                查看项目信息。控制台输出
                     <Input
                         type="text"
                         value={theAddress}
