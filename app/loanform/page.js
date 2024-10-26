@@ -10,7 +10,7 @@ import styles from "./page.module.css";
 import { Web3Provider } from '../Web3Provider.jsx'
 import { useContract } from '../useContract';
 import Navigate from '../navigate/navigate';
-import StarBackground from '../particles/ParticleBackground';
+// import StarBackground from '../particles/ParticleBackground';
 
 
 const columns = [
@@ -89,8 +89,9 @@ function Vote_o() {
 
     const [theAddress, settheAddress] = useState("");
     const [pid, setpid] = useState(0);
+    const [projectsPid, setprojectsPid] = useState(0);
     // const { createProject, getLaunchProjects, launchProjects} = useContract();
-    const { createProject, getLaunchProjects } = useContract();
+    const { createProject, getLaunchProjects, getProjects } = useContract();
 
     // const ListComponent = ({ data }) => {  
     //     console.log("处理数据：", data)
@@ -134,7 +135,7 @@ function Vote_o() {
             <Navigate/>
         <div className={styles.page}>
         <main className={styles.main}>
-          <StarBackground/>
+          {/* <StarBackground/> */}
 
             <h1>Loan Platform</h1>
             <Table columns={columns} dataSource={data} />
@@ -211,7 +212,7 @@ function Vote_o() {
                 </Form>
 
 
-                查看项目信息。控制台输出
+                查看项目id。控制台输出
                     <Input
                         type="text"
                         value={theAddress}
@@ -235,6 +236,23 @@ function Vote_o() {
                     
                     </Button>
 
+                    查看项目详细信息。控制台输出
+                    <Input
+                        type="text"
+                        value={projectsPid}
+                        onChange={(e) => setprojectsPid(e.target.value)}
+                        className={styles.input}
+                    />
+                        <Button 
+                        onClick={
+                            async ()=>{
+                              console.log("theAddress to solidity : ", projectsPid)
+                                await getProjects(projectsPid);
+                            }} 
+                        type="primary" size="middle">
+                        查看单个项目Projects
+                    
+                    </Button>
         </main>
         </div>
         </Web3Provider>
