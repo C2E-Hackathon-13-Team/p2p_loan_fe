@@ -1,9 +1,10 @@
 
 import { Contract} from '@ethersproject/contracts';
-import ABI from '../artifacts/contracts/GLD.sol/GLD.json';
+// import ABI from '../artifacts/contracts/GLD.sol/GLD.json';
+import ABI from '../artifacts/contracts/GLD.sol/LockModule#Loan.json';
 import { useWeb3React } from '@web3-react/core';
-import { useState } from 'react';
-const tokenAddress = '0x5fbdb2315678afecb367f032d93f642f64180aa3';
+import { useState, useEffect } from 'react';
+const tokenAddress = '0xA51926D9B32622ee286cCfB41dBb53FB962E074E';
 const a = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
 const b = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
 
@@ -18,9 +19,9 @@ const b = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
  */
 export function useContract(){
     const {provider,connector,account} = useWeb3React();
-    const [balance, setBalance] = useState(0);
-    const [balanceb, setBalanceb] = useState(0);
-    const [voteRes, setvoteRes] = useState([]);
+    // const [balance, setBalance] = useState(0);
+    // const [balanceb, setBalanceb] = useState(0);
+    const [launchProjects, setlaunchProjects] = useState("");
     // useEffect(()=>{
     //     const signer = provider.getSigner();
     //     if(!provider){
@@ -32,81 +33,50 @@ export function useContract(){
     //     })
     // },[provider, connector, account])
 
-    const approve = async ()=>{
+    useEffect(() => {
+        console.log("launchProjects：", launchProjects);
+      }, [launchProjects]);
+
+    const createProject = async (amount, rate, term, collectEndTime, repayMethod)=>{
         const signer = provider.getSigner();
         if(!provider){
             return;
         }
         const contract = new Contract(tokenAddress, ABI.abi, signer);
-        await contract.approve(b,3);
+        await contract.createProject(amount, rate, term, collectEndTime, repayMethod);
     }
 
-    const transfer = async ()=>{
-        const signer = provider.getSigner();
-        if(!provider){
-            return;
-        }
-        const contract = new Contract(tokenAddress, ABI.abi, signer);
-        await contract.transferFrom(a, b, 3);
-    }
 
-    const balanceOf = async ()=>{
-        const signer = provider.getSigner();
-        if(!provider){
-            return;
-        }
-        const contract = new Contract(tokenAddress, ABI.abi, signer);
-        const balance = await contract.balanceOf(a);
-        const balanceb = await contract.balanceOf(b);
-        setBalance(balance.toString());
-        setBalanceb(balanceb.toString());
-        console.log("balancea",balance.toString());
-        console.log("balanceb",balanceb.toString());
-    }
-
-    const addCandidate = async (candidateName)=>{
-        console.log(candidateName, " in useContract.js")
-        const signer = provider.getSigner();
-        if(!provider){
-            return;
-        }
-        const contract = new Contract(tokenAddress, ABI.abi, signer);
-        await contract.addCandidate(candidateName);
-    }
+    // const addCandidate = async (candidateName)=>{
+    //     console.log(candidateName, " in useContract.js")
+    //     const signer = provider.getSigner();
+    //     if(!provider){
+    //         return;
+    //     }
+    //     const contract = new Contract(tokenAddress, ABI.abi, signer);
+    //     await contract.addCandidate(candidateName);
+    // }
     
-    const vote = async (candidateId)=>{
-        console.log(candidateId, " in useContract.js")
+
+    const getLaunchProjects = async (theAddress, pid)=>{
+        console.log("getLaunchProjects", " in useContract.js", theAddress)
         const signer = provider.getSigner();
         if(!provider){
             return;
         }
         const contract = new Contract(tokenAddress, ABI.abi, signer);
-        await contract.vote(candidateId);
+        const rs = await contract.launchProjects(theAddress, pid);
+        console.log("rs:", rs, "account: ", account);
+        setlaunchProjects(rs.toString());
+        // console.log("launchProjects：", launchProjects, launchProjects.toString());
     }
-    
-    const getAllCandidates = async ()=>{
-        console.log("getAllCandidates", " in useContract.js")
-        const signer = provider.getSigner();
-        if(!provider){
-            return;
-        }
-        const contract = new Contract(tokenAddress, ABI.abi, signer);
-        const voteRes = await contract.getAllCandidates();
-        setvoteRes(voteRes);
-        console.log("投票数据：", voteRes)
-    }
+
 
 
     return {
-        approve,
-        transfer,
-        balanceOf,
-        balance,
-        balanceb,
-        addCandidate,
-        vote,
-        getAllCandidates,
-        voteRes
+        createProject,
+        getLaunchProjects,
+        launchProjects,
     }
 }
 

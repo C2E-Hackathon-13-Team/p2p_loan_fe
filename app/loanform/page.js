@@ -94,12 +94,11 @@ const columns = [
   ];
 
 function Vote_o() {
-// export default function Vote() {
 
-    const [candidateName, setcandidateName] = useState("");
-    const [candidateId, setcandidateId] = useState(-1);
+    const [theAddress, settheAddress] = useState("");
+    const [pid, setpid] = useState(0);
     const { isActive, account,  connector,  provider } = useWeb3React();
-    const {approve, addCandidate, vote, getAllCandidates, voteRes} = useContract();
+    const { createProject, getLaunchProjects, launchProjects, voteRes} = useContract();
 
     const ListComponent = ({ data }) => {  
         console.log("处理数据：", data)
@@ -121,11 +120,21 @@ function Vote_o() {
       };
       const [form] = Form.useForm(); // 创建表单实例
 
-      const onFinish = (values) => {
+      // const onFinish = (values) => {
+      //   console.log('Received values of form: ', values); // 处理表单数据
+      //   console.log("name:", values.name)
+      // };
+
+      const onFinish = async (values) => {
         console.log('Received values of form: ', values); // 处理表单数据
-        console.log("name:", values.name)
+        await createProject(values.amount, values.rate, values.term, values.endtime, values.repayMethod);
       };
     
+      // onClick={
+      //   async ()=>{
+      //       console.log(candidateName)
+      //       await addCandidate(candidateName);
+      //   }} 
 
       // zustand data
       const { count, increment, decrement } = useCounterStore();
@@ -168,18 +177,24 @@ function Vote_o() {
                     <Radio.Button value="large">Large</Radio.Button>
                     </Radio.Group>
                 </Form.Item>
-                <Form.Item label="Name" name="name"
-                    rules={[{ required: true, message: 'Please input your name' }]}
-                >
-                    <Input placeholder="Your Name"/>
-                </Form.Item>
                 <Form.Item label="Amount" name="amount">
                     <Input placeholder="Amount"/>
                 </Form.Item>
-                <Form.Item label="term/month" name="month">
+                <Form.Item label="Rate" name="rate"
+                    rules={[{ required: true, message: 'Please input your rate' }]}
+                >
+                    <Input placeholder="Your rate"/>
+                </Form.Item>
+                <Form.Item label="term/month" name="term">
                     <Input placeholder="Month Num"/>
                 </Form.Item>
-                <Form.Item label="Interest Rate" name="rate">
+                <Form.Item label="Endtime" name="endtime">
+                    <Input placeholder="endtime stamp"/>
+                </Form.Item>
+                <Form.Item label="RepayMethod" name="repayMethod">
+                    <Input placeholder="repayMethod"/>
+                </Form.Item>
+                {/* <Form.Item label="Interest Rate" name="rate">
                     <Select placeholder="Select the rate">
                     <Select.Option value="1">1%</Select.Option>
                     <Select.Option value="2">2%</Select.Option>
@@ -187,7 +202,7 @@ function Vote_o() {
                     <Select.Option value="4">4%</Select.Option>
                     <Select.Option value="5">5%</Select.Option>
                     </Select>
-                </Form.Item>
+                </Form.Item> */}
 
                 {/* <Form.Item label="DatePicker">
                     <DatePicker />
@@ -203,6 +218,30 @@ function Vote_o() {
                 </Form.Item>
                 </Form>
 
+
+               投票 ： 填写候选者ID，点击投票;
+                    <Input
+                        type="text"
+                        value={theAddress}
+                        onChange={(e) => settheAddress(e.target.value)}
+                        className={styles.input}
+                    />
+                        <Input
+                        type="text"
+                        value={pid}
+                        onChange={(e) => setpid(e.target.value)}
+                        className={styles.input}
+                    />
+                        <Button 
+                        onClick={
+                            async ()=>{
+                              console.log("theAddress to solidity : ", theAddress)
+                                await getLaunchProjects(theAddress, pid);
+                            }} 
+                        type="primary" size="middle">
+                        查看项目池LaunchProjects
+                    
+                    </Button>
 
         </main>
         </div>
