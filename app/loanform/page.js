@@ -92,6 +92,11 @@ const columns = [
         </Space>
       ),
     },
+    {
+      title: 'Pid',
+      dataIndex: 'pid',
+      key: 'pid',
+    },
   ];
   
   
@@ -100,12 +105,13 @@ const columns = [
     const [theAddress, settheAddress] = useState("");
     const [pid, setpid] = useState(0);
     const [projectsPid, setprojectsPid] = useState(0);
+    const [projectsvalue, setprojectsvalue] = useState(0);
 
     const [data, setdata] = useState([]);
     const { count, increment, decrement, tabledata, setTableData } = useCounterStore();
 
-    // const { createProject, getLaunchProjects, launchProjects} = useContract();
-    const { createProject, getLaunchProjects, getProjects, getAllProjects, allProjects } = useContract();
+    // 合约调用
+    const { createProject, getLaunchProjects, getProjects, getAllProjects, allProjects, contribute } = useContract();
 
     // const ListComponent = ({ data }) => {  
     //     console.log("处理数据：", data)
@@ -310,28 +316,39 @@ const columns = [
                 <Form.Item label="Commit">
                     <Button color="primary" variant="outlined" htmlType="submit">Commit</Button>
                 </Form.Item>
+                <Form.Item label="Pid" name="pid">
+                    <Input placeholder="pid"/>
+                </Form.Item>
                 </Form>
                 </Col>
             </Row>
 
-{/*   
-                    查看项目详细信息。控制台输出
+  
+                    出资  。控制台输出
                     <Input
+                        placeholder="pid"
                         type="text"
                         value={projectsPid}
                         onChange={(e) => setprojectsPid(e.target.value)}
+                        className={styles.input}
+                    />
+                     <Input
+                      placeholder="value"
+                        type="text"
+                        value={projectsvalue}
+                        onChange={(e) => setprojectsvalue(e.target.value)}
                         className={styles.input}
                     />
                         <Button 
                         onClick={
                             async ()=>{
                               console.log("theAddress to solidity : ", projectsPid)
-                                await getProjects(projectsPid);
+                                await contribute(projectsPid, projectsvalue);
                             }} 
                         type="primary" size="middle">
-                        查看单个项目Projects
+                        出资
                     
-                    </Button> */}
+                    </Button>
 
                   
                   

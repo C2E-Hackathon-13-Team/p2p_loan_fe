@@ -57,7 +57,7 @@ export function useContract(){
     //     }
     //   }, []);
 
-      // 发布筹款
+      // 发布筹款 
     const createProject = async (amount, rate, term, collectEndTime, repayMethod)=>{
         const signer = provider.getSigner();
         if(!provider){
@@ -68,14 +68,22 @@ export function useContract(){
     }
 
     
-    // 出资 
-    const contribute = async (amount, rate, term, collectEndTime, repayMethod)=>{
+    // 出资 contribute
+    const contribute = async (projectsPid, projectsvalue)=>{
         const signer = provider.getSigner();
         if(!provider){
             return;
         }
         const contract = new Contract(tokenAddress, ABI.abi, signer);
-        await contract.createProject(amount, rate, term, collectEndTime, repayMethod);
+        await contract.contribute(projectsPid, { from: account, value: projectsvalue })
+         .then((transactionResponse) => {
+            console.log('Transaction hash:', transactionResponse.hash);
+            return transactionResponse.wait();
+          }).then((transactionReceipt) => {
+            console.log('Transaction receipt:', transactionReceipt);
+          }).catch((error) => {
+            console.error('Error:', error);
+          });
     }
 
 
@@ -139,6 +147,7 @@ export function useContract(){
         console.log("rs:", rs, rs.toString());
         const formatted = await rs.map((a, index) => {
             return {
+                pid: a.pid.toString(),
                 amount: a.amount.toString(),
                 rate: a.rate.toString(),
                 term: a.term.toString(),
@@ -164,7 +173,8 @@ export function useContract(){
         getProjects,
         Projects,
         getAllProjects,
-        allProjects
+        allProjects,
+        contribute
 
     }
 }
