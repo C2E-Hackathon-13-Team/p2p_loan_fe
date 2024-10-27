@@ -16,6 +16,7 @@ export function useContract(){
     // const [balance, setBalance] = useState(0);
     // const [balanceb, setBalanceb] = useState(0);
     const [launchProjects, setlaunchProjects] = useState([]);
+    const [contributeProjects, setContributeProjects] = useState([]);
     const [allProjects, setallProjects] = useState([]);
     const [Projects, setProjects] = useState({
         amount: 0,
@@ -104,7 +105,6 @@ export function useContract(){
 
 
     function respToProject(r){
-        console.log(r.collected.toBigInt())
         return {
             pid: r.pid.toBigInt(),
             amount: r.amount.toBigInt(),
@@ -125,6 +125,26 @@ export function useContract(){
         const contract = new Contract(tokenAddress, ABI.abi, provider.getSigner());
         const rs = await contract.getLaunchProjects(address);
         setlaunchProjects(rs.map(r => respToProject(r)));
+    }
+
+    const refreshContributeProjects = async (address)=>{
+        const contract = new Contract(tokenAddress, ABI.abi, provider.getSigner());
+        const rs = await contract.getContributeProjects(address);
+        setContributeProjects(rs.map(r => respToProject(r)));
+    }
+
+    //撤销
+    const revocateProject = async (pid)=>{
+        const contract = new Contract(tokenAddress, ABI.abi, provider.getSigner());
+        let rs = await contract.revocateProject(pid);
+        rs = await rs.wait();
+    }
+
+    //确认
+    const confirmProject = async (pid)=>{
+        const contract = new Contract(tokenAddress, ABI.abi, provider.getSigner());
+        let rs = await contract.confirm(pid);
+        rs = await rs.wait();
     }
 
     const getProjects = async (pid)=>{
@@ -186,6 +206,10 @@ export function useContract(){
         createProject,
         launchProjects,
         refreshLaunchProjects,
+        contributeProjects,
+        refreshContributeProjects,
+        revocateProject,
+        confirmProject,
         getProjects,
         Projects,
         getAllProjects,
