@@ -6,7 +6,10 @@ import { useState, useEffect } from 'react';
 import useCounterStore  from '../store/useStore';
 
 // const tokenAddress = '0xA51926D9B32622ee286cCfB41dBb53FB962E074E';
-const tokenAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+// const tokenAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+
+// sikaiwei dev
+const tokenAddress = '0xf5C6D6A6ea3C3d344B0c61929dCf871C6E4e1FaF';
 
 export function useContract(){
     const {provider, account} = useWeb3React();
