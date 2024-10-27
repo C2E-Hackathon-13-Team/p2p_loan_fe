@@ -6,13 +6,13 @@ import { useState, useEffect } from 'react';
 import useCounterStore  from '../store/useStore';
 
 // const tokenAddress = '0xA51926D9B32622ee286cCfB41dBb53FB962E074E';
-const tokenAddress = '0xf5C6D6A6ea3C3d344B0c61929dCf871C6E4e1FaF';
+const tokenAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 
 export function useContract(){
     const {provider, account} = useWeb3React();
     // const [balance, setBalance] = useState(0);
     // const [balanceb, setBalanceb] = useState(0);
-    const [launchProjects, setlaunchProjects] = useState("");
+    const [launchProjects, setlaunchProjects] = useState([]);
     const [allProjects, setallProjects] = useState([]);
     const [Projects, setProjects] = useState({
         amount: 0,
@@ -96,19 +96,32 @@ export function useContract(){
     //     const contract = new Contract(tokenAddress, ABI.abi, signer);
     //     await contract.addCandidate(candidateName);
     // }
+
+
+
+
+    function respToProject(r){
+        console.log(r.collected.toBigInt())
+        return {
+            pid: r.pid.toBigInt(),
+            amount: r.amount.toBigInt(),
+            rate: r.rate.toNumber(),
+            term: r.term.toNumber(),
+            createTime: r.createTime.toNumber(),
+            collectEndTime: r.collectEndTime.toNumber(),
+            repayMethod: r.repayMethod,
+            status: r.status,
+            launcher: r.launcher,
+            collected: r.collected.toBigInt(),
+            currentBill: r.currentBill.toBigInt()
+        }
+    }
     
 
-    const getLaunchProjects = async (theAddress, pid)=>{
-        console.log("getLaunchProjects", " in useContract.js", theAddress)
-        const signer = provider.getSigner();
-        if(!provider){
-            return;
-        }
-        const contract = new Contract(tokenAddress, ABI.abi, signer);
-        const rs = await contract.launchProjects(theAddress, pid);
-        console.log("rs:", rs, "account: ", account);
-        setlaunchProjects(rs.toString());
-        // console.log("launchProjects：", launchProjects, launchProjects.toString());
+    const refreshLaunchProjects = async (address)=>{
+        const contract = new Contract(tokenAddress, ABI.abi, provider.getSigner());
+        const rs = await contract.getLaunchProjects(address);
+        setlaunchProjects(rs.map(r => respToProject(r)));
     }
 
     const getProjects = async (pid)=>{
@@ -168,8 +181,8 @@ export function useContract(){
 
     return {
         createProject,
-        getLaunchProjects,
         launchProjects,
+        refreshLaunchProjects,
         getProjects,
         Projects,
         getAllProjects,
