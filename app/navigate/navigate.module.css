@@ -39,7 +39,7 @@
     color: #333;
 }
 
-.activeLink {
+.navList li p.activeLink {
     background-color: hsl(73, 65%, 72%);
-    color: hwb(0 4% 96%);
-}
+    color: #000; /* 设置为黑色 */
+  }
