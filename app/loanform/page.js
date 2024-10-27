@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Input,  Button,  Table, Tag, Space, Col, Row, Divider,
+import { Input,  Button,  Table, Tag, Space, Col, Row, Divider, 
     Form,
     Radio
      } from "antd";
@@ -11,88 +11,11 @@ import { Web3Provider } from '../Web3Provider.jsx'
 import { useContract } from '../useContract';
 import Navigate from '../navigate/navigate';
 import useCounterStore from '../../store/useStore';
+import InputDialog from './InputDialog';
 
 // import StarBackground from '../particles/ParticleBackground';
 
 
-const columns = [
-    // {
-    //   title: 'Name',
-    //   dataIndex: 'name',
-    //   key: 'name',
-    //   render: (text) => <a>{text}</a>,
-    // },
-    {
-      title: 'Fundraising Amount',
-      dataIndex: 'amount',
-      key: 'amount',
-    },
-    {
-      title: 'Interest Rate',
-      dataIndex: 'rate',
-      key: 'rate',
-    },
-    {
-      title: 'Interest term',
-      dataIndex: 'term',
-      key: 'term',
-    },
-    {
-      title: 'Status',
-      key: 'status',
-      dataIndex: 'status',
-      // render: (_, { status }) => (
-      //   <>
-      //     {status.map((tag) => {
-      //       let color = tag.length > 5 ? 'geekblue' : 'green';
-      //       if (tag === 'loser') {
-      //         color = 'volcano';
-      //       }
-      //       return (
-      //         <Tag color={color} key={tag}>
-      //           {tag.toUpperCase()}
-      //         </Tag>
-      //       );
-      //     })}
-      //   </>
-      // ),
-    },
-    {
-      title: 'CollectEndTime',
-      dataIndex: 'collectEndTime',
-      key: 'collectEndTime',
-    },
-    {
-      title: 'collected',
-      dataIndex: 'collected',
-      key: 'collected',
-    },
-    {
-      title: 'currentBill',
-      dataIndex: 'currentBill',
-      key: 'currentBill',
-    },
-    {
-      title: 'launcher',
-      dataIndex: 'launcher',
-      key: 'launcher',
-    },
-    {
-      title: 'repayMethod',
-      dataIndex: 'repayMethod',
-      key: 'repayMethod',
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      render: (_, record) => (
-        <Space size="middle">
-          <a>Invite {record.name}</a>
-          <a>Delete</a>
-        </Space>
-      ),
-    },
-  ];
   
   
   function Vote_o() {
@@ -100,12 +23,13 @@ const columns = [
     const [theAddress, settheAddress] = useState("");
     const [pid, setpid] = useState(0);
     const [projectsPid, setprojectsPid] = useState(0);
+    const [projectsvalue, setprojectsvalue] = useState(0);
 
     const [data, setdata] = useState([]);
     const { count, increment, decrement, tabledata, setTableData } = useCounterStore();
 
-    // const { createProject, getLaunchProjects, launchProjects} = useContract();
-    const { createProject, getLaunchProjects, getProjects, getAllProjects, allProjects } = useContract();
+    // 合约调用
+    const { createProject, getLaunchProjects, getProjects, getAllProjects, allProjects, contribute } = useContract();
 
     // const ListComponent = ({ data }) => {  
     //     console.log("处理数据：", data)
@@ -136,6 +60,126 @@ const columns = [
         console.log('Received values of form: ', values); // 处理表单数据
         await createProject(values.amount, values.rate, values.term, values.endtime, values.repayMethod);
       };
+      // 出资对话框
+      const [visibleDialog, setVisibleDialog] = useState(false);
+      const [selectedRowData, setSelectedRowData] = useState(null);
+ 
+      const handleSubmitInput = async (inputValue) => {
+        // 这里假设你有一个名为 doSomething 的函数，接收输入数据和本行中的值作为参数
+        if (selectedRowData) {
+          // setTimeout(() => {
+            
+            console.log("commit data: ", inputValue, selectedRowData);
+            // async ()=>{
+              await contribute(selectedRowData, inputValue);
+            // }
+          // }, 1000);
+        }
+      };
+ 
+      const handleCancelDialog = () => {
+        setVisibleDialog(false);
+        setSelectedRowData(null);
+      };
+
+      const columns = [
+        // {
+        //   title: 'Name',
+        //   dataIndex: 'name',
+        //   key: 'name',
+        //   render: (text) => <a>{text}</a>,
+        // },
+        {
+          title: 'Fundraising Amount',
+          dataIndex: 'amount',
+          key: 'amount',
+        },
+        {
+          title: 'Interest Rate',
+          dataIndex: 'rate',
+          key: 'rate',
+        },
+        {
+          title: 'Interest term',
+          dataIndex: 'term',
+          key: 'term',
+        },
+        {
+          title: 'Status',
+          key: 'status',
+          dataIndex: 'status',
+          // render: (_, { status }) => (
+          //   <>
+          //     {status.map((tag) => {
+          //       let color = tag.length > 5 ? 'geekblue' : 'green';
+          //       if (tag === 'loser') {
+          //         color = 'volcano';
+          //       }
+          //       return (
+          //         <Tag color={color} key={tag}>
+          //           {tag.toUpperCase()}
+          //         </Tag>
+          //       );
+          //     })}
+          //   </>
+          // ),
+        },
+        {
+          title: 'CollectEndTime',
+          dataIndex: 'collectEndTime',
+          key: 'collectEndTime',
+        },
+        {
+          title: 'collected',
+          dataIndex: 'collected',
+          key: 'collected',
+        },
+        {
+          title: 'currentBill',
+          dataIndex: 'currentBill',
+          key: 'currentBill',
+        },
+        {
+          title: 'launcher',
+          dataIndex: 'launcher',
+          key: 'launcher',
+        },
+        {
+          title: 'repayMethod',
+          dataIndex: 'repayMethod',
+          key: 'repayMethod',
+        },
+        // {
+        //   title: 'Action',
+        //   key: 'action',
+        //   render: (_, record) => (
+        //     <Space size="middle">
+        //       <a>Invite {record.name}</a>
+        //       <a>Delete</a>
+        //     </Space>
+        //   ),
+        // },
+        {
+          title: 'Action',
+          render: (text, record) => (
+            <Button type="link" onClick={async () => {
+              console.log(record.amount, record.pid);
+              await setSelectedRowData(record.pid);
+              setTimeout(() => {
+                console.log(selectedRowData);
+              }, 1000);
+              setVisibleDialog(true);
+            }}>
+              出资
+            </Button>
+          ),
+        },
+        {
+          title: 'Pid',
+          dataIndex: 'pid',
+          key: 'pid',
+        },
+      ];
 
       // setTimeout(() => {
       //   console.log("setTimeout: ", allProjects, data);
@@ -146,6 +190,14 @@ const columns = [
       //   console.log("setTimeout: ", allProjects, data);
       //   getAllProjects();
       // }, 3000);
+
+      // 更新选中行的pid到 出资按钮
+      useEffect(() => {
+        if (selectedRowData && visibleDialog) {
+          // 这里可以执行一些初始化操作，比如设置对话框中的默认值等
+          console.log("selectedRowData:", selectedRowData, visibleDialog);
+        }
+      }, [selectedRowData, visibleDialog]);
 
 
       useEffect(() => {
@@ -201,6 +253,12 @@ const columns = [
             </Divider>
   
             <Table columns={columns} dataSource={tabledata} />
+            <InputDialog
+              onSubmit={handleSubmitInput}
+              visible={visibleDialog}
+              onCancel={handleCancelDialog}
+              defaultValue=""
+            />
             </Col>
             </Row>
 
@@ -310,28 +368,39 @@ const columns = [
                 <Form.Item label="Commit">
                     <Button color="primary" variant="outlined" htmlType="submit">Commit</Button>
                 </Form.Item>
+                <Form.Item label="Pid" name="pid">
+                    <Input placeholder="pid"/>
+                </Form.Item>
                 </Form>
                 </Col>
             </Row>
 
-{/*   
-                    查看项目详细信息。控制台输出
+  
+                    出资  。控制台输出
                     <Input
+                        placeholder="pid"
                         type="text"
                         value={projectsPid}
                         onChange={(e) => setprojectsPid(e.target.value)}
+                        className={styles.input}
+                    />
+                     <Input
+                      placeholder="value"
+                        type="text"
+                        value={projectsvalue}
+                        onChange={(e) => setprojectsvalue(e.target.value)}
                         className={styles.input}
                     />
                         <Button 
                         onClick={
                             async ()=>{
                               console.log("theAddress to solidity : ", projectsPid)
-                                await getProjects(projectsPid);
+                                await contribute(projectsPid, projectsvalue);
                             }} 
                         type="primary" size="middle">
-                        查看单个项目Projects
+                        出资
                     
-                    </Button> */}
+                    </Button>
 
                   
                   
