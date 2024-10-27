@@ -12,6 +12,7 @@ import { useContract } from '../useContract';
 import Navigate from '../navigate/navigate';
 import useCounterStore from '../../store/useStore';
 import InputDialog from './InputDialog';
+import ConformDialog from './conformDialog';
 
 // import StarBackground from '../particles/ParticleBackground';
 
@@ -60,6 +61,7 @@ import InputDialog from './InputDialog';
         console.log('Received values of form: ', values); // 处理表单数据
         await createProject(values.amount, values.rate, values.term, values.endtime, values.repayMethod);
       };
+
       // 出资对话框
       const [visibleDialog, setVisibleDialog] = useState(false);
       const [selectedRowData, setSelectedRowData] = useState(null);
@@ -80,6 +82,36 @@ import InputDialog from './InputDialog';
       const handleCancelDialog = () => {
         setVisibleDialog(false);
         setSelectedRowData(null);
+      };
+
+      // 确认收款对话框
+      const [visibleConformDialog, setVisibleConformDialog] = useState(false);
+      // const [selectedRowData, setSelectedRowData] = useState(null);
+  
+      const handleConformSubmitInput = async (inputValue) => {
+        // 这里假设你有一个名为 doSomething 的函数，接收输入数据和本行中的值作为参数
+        if (selectedRowData) {
+          // setTimeout(() => {
+            
+            console.log("commit data: ", inputValue, selectedRowData);
+            // async ()=>{
+              await contribute(selectedRowData, inputValue);
+            // }
+          // }, 1000);
+        }
+      };
+  
+      const handleConformCancelDialog = () => {
+        setVisibleDialog(false);
+        setSelectedRowData(null);
+      };
+
+      // status 映射
+      const statusMapping = {
+        1: { text: '筹资期', color: 'blue' },
+        2: { text: '还款期', color: 'green' },
+        3: { text: '已结束', color: 'gray' },
+        4: { text: '已撤销', color: 'red' },
       };
 
       const columns = [
@@ -108,6 +140,15 @@ import InputDialog from './InputDialog';
           title: 'Status',
           key: 'status',
           dataIndex: 'status',
+          render: (status) => {
+            const { text, color } = statusMapping[status] || { text: '未知状态', color: 'black' };
+            return <Tag color={color}>{text}</Tag>;
+          },
+        },
+        // {
+        //   title: 'Status',
+        //   key: 'status',
+        //   dataIndex: 'status',
           // render: (_, { status }) => (
           //   <>
           //     {status.map((tag) => {
@@ -123,7 +164,7 @@ import InputDialog from './InputDialog';
           //     })}
           //   </>
           // ),
-        },
+        // },
         {
           title: 'CollectEndTime',
           dataIndex: 'collectEndTime',
@@ -368,14 +409,11 @@ import InputDialog from './InputDialog';
                 <Form.Item label="Commit">
                     <Button color="primary" variant="outlined" htmlType="submit">Commit</Button>
                 </Form.Item>
-                <Form.Item label="Pid" name="pid">
-                    <Input placeholder="pid"/>
-                </Form.Item>
                 </Form>
                 </Col>
             </Row>
 
-  
+{/*   
                     出资  。控制台输出
                     <Input
                         placeholder="pid"
@@ -400,7 +438,7 @@ import InputDialog from './InputDialog';
                         type="primary" size="middle">
                         出资
                     
-                    </Button>
+                    </Button> */}
 
                   
                   
