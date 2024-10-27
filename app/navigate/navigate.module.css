@@ -35,11 +35,17 @@
 }
 
 .navList li p:hover {
-    background-color: #FFF;
+    /* background-color: #FFF; */
+    background-color: hsl(73, 65%, 72%);
     color: #333;
+    border-radius: 5px; /* 根据需要调整圆角的半径值 */
+    padding: 10px; /* 调整内边距 */
+
 }
 
 .navList li p.activeLink {
     background-color: hsl(73, 65%, 72%);
     color: #000; /* 设置为黑色 */
+    border-radius: 5px; /* 根据需要调整圆角的半径值 */
+    padding: 10px; /* 调整内边距 */
   }
