@@ -10,6 +10,8 @@ import styles from "./page.module.css";
 import { Web3Provider } from '../Web3Provider.jsx'
 import { useContract } from '../useContract';
 import Navigate from '../navigate/navigate';
+import useCounterStore from '../../store/useStore';
+
 // import StarBackground from '../particles/ParticleBackground';
 
 
@@ -91,14 +93,17 @@ const columns = [
       ),
     },
   ];
-
+  
   
   function Vote_o() {
     
     const [theAddress, settheAddress] = useState("");
     const [pid, setpid] = useState(0);
     const [projectsPid, setprojectsPid] = useState(0);
+
     const [data, setdata] = useState([]);
+    const { count, increment, decrement, tabledata, setTableData } = useCounterStore();
+
     // const { createProject, getLaunchProjects, launchProjects} = useContract();
     const { createProject, getLaunchProjects, getProjects, getAllProjects, allProjects } = useContract();
 
@@ -132,18 +137,43 @@ const columns = [
         await createProject(values.amount, values.rate, values.term, values.endtime, values.repayMethod);
       };
 
-      setTimeout(() => {
-        getAllProjects();
-      }, 1000);
+      // setTimeout(() => {
+      //   console.log("setTimeout: ", allProjects, data);
+      //   getAllProjects();
+      // }, 60000);
+
+      // setInterval(() => {
+      //   console.log("setTimeout: ", allProjects, data);
+      //   getAllProjects();
+      // }, 3000);
+
 
       useEffect(() => {
+        console.log("useEffect: ", allProjects, data);
+
         getAllProjects();
+      }, [0]);
+
+
+      useEffect(() => {
+        // 从 localStorage 中读取 tabledata 并更新状态
+        const storedtabledata = localStorage.getItem('tabledata');
+        if (storedtabledata !== null) {
+          const parsedData = JSON.parse(storedtabledata);
+          setTableData(parsedData);
+        }
       }, []);
 
       useEffect(() => {
-        console.log("allProjects: ", allProjects, data);
-        setdata(allProjects);
-      }, [allProjects]);
+        console.log("allProjects: ", allProjects, "data :", data);
+        // setTableData(allProjects);
+        if (tabledata.length > 0) {
+
+          localStorage.setItem('tabledata', JSON.stringify(tabledata)); // 将索引存储到 localStorage
+          console.log("tabledata:", tabledata)
+        }
+
+      }, [tabledata]);
 
       // onClick={
       //   async ()=>{
@@ -161,9 +191,16 @@ const columns = [
           <Col span={1}>
             </Col>
             <Col span={23}>
+              <Divider 
+            orientation="left"  
+            style={{
+            borderColor: '#7cb305',
+            }}>
               <h1>Loan Platform</h1>
+
+            </Divider>
   
-            <Table columns={columns} dataSource={data} />
+            <Table columns={columns} dataSource={tabledata} />
             </Col>
             </Row>
 

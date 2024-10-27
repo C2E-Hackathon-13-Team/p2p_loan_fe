@@ -3,6 +3,8 @@ import { Contract} from '@ethersproject/contracts';
 import ABI from '../artifacts/contracts/GLD.sol/LockModule#Loan.json';
 import { useWeb3React } from '@web3-react/core';
 import { useState, useEffect } from 'react';
+import useCounterStore  from '../store/useStore';
+
 // const tokenAddress = '0xA51926D9B32622ee286cCfB41dBb53FB962E074E';
 const tokenAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 
@@ -11,7 +13,7 @@ export function useContract(){
     // const [balance, setBalance] = useState(0);
     // const [balanceb, setBalanceb] = useState(0);
     const [launchProjects, setlaunchProjects] = useState([]);
-    const [allProjects, setallProjects] = useState("");
+    const [allProjects, setallProjects] = useState([]);
     const [Projects, setProjects] = useState({
         amount: 0,
         rate: 0,
@@ -23,6 +25,9 @@ export function useContract(){
         collected: 0,
         currentBill: 0
     });
+
+    const { count, increment, decrement, tabledata, setTableData } = useCounterStore();
+
     // useEffect(()=>{
     //     const signer = provider.getSigner();
     //     if(!provider){
@@ -42,7 +47,29 @@ export function useContract(){
         console.log("Projects: ", Projects);
       }, [Projects]);
 
+
+    //   useEffect(() => {
+    //     // 从 localStorage 中读取 tabledata 并更新状态
+    //     const storedtabledata = localStorage.getItem('tabledata');
+    //     if (storedtabledata !== null) {
+    //       const parsedData = JSON.parse(storedtabledata);
+    //       setallProjects(parsedData);
+    //     }
+    //   }, []);
+
+      // 发布筹款
     const createProject = async (amount, rate, term, collectEndTime, repayMethod)=>{
+        const signer = provider.getSigner();
+        if(!provider){
+            return;
+        }
+        const contract = new Contract(tokenAddress, ABI.abi, signer);
+        await contract.createProject(amount, rate, term, collectEndTime, repayMethod);
+    }
+
+    
+    // 出资 
+    const contribute = async (amount, rate, term, collectEndTime, repayMethod)=>{
         const signer = provider.getSigner();
         if(!provider){
             return;
@@ -123,7 +150,7 @@ export function useContract(){
         const rs = await contract.getAllProjects();
 
         console.log("rs:", rs, rs.toString());
-        const formatted = rs.map((a, index) => {
+        const formatted = await rs.map((a, index) => {
             return {
                 amount: a.amount.toString(),
                 rate: a.rate.toString(),
@@ -138,7 +165,9 @@ export function useContract(){
             };
         });
         console.log("formatted: ", formatted);
-        setallProjects(formatted);
+        // setallProjects(formatted);
+        setTableData(formatted);
+        console.log("tabledata:", tabledata)
     }
 
     return {
