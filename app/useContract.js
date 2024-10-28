@@ -9,7 +9,10 @@ import useCounterStore  from '../store/useStore';
 // const tokenAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 
 // sikaiwei dev
-const tokenAddress = '0xf5C6D6A6ea3C3d344B0c61929dCf871C6E4e1FaF';
+// const tokenAddress = '0xf5C6D6A6ea3C3d344B0c61929dCf871C6E4e1FaF';
+// 2024年10月28日
+const tokenAddress = '0xe4b1cE541bEb0D48b737057819E4266596299fA0';
+
 
 export function useContract(){
     const {provider, account} = useWeb3React();
@@ -30,7 +33,7 @@ export function useContract(){
         currentBill: 0
     });
 
-    const { count, increment, decrement, tabledata, setTableData } = useCounterStore();
+    const { count, increment, decrement, tabledata, setTableData, billData, setBillData } = useCounterStore();
 
     // useEffect(()=>{
     //     const signer = provider.getSigner();
@@ -47,9 +50,9 @@ export function useContract(){
         console.log("launchProjects：", launchProjects);
       }, [launchProjects]);
 
-      useEffect(() => {
-        console.log("Projects: ", Projects);
-      }, [Projects]);
+    useEffect(() => {
+    console.log("Projects: ", Projects);
+    }, [Projects]);
 
 
     //   useEffect(() => {
@@ -202,6 +205,52 @@ export function useContract(){
         console.log("tabledata:", tabledata)
     }
 
+    // 获取单个项目账单
+    const getBill = async (pid)=>{
+        console.log("getBill", " in useContract.js")
+        const signer = provider.getSigner();
+        if(!provider){
+            return;
+        }
+        const contract = new Contract(tokenAddress, ABI.abi, signer);
+        const rs = await contract.getBill(pid);
+
+        console.log("rs:", rs, rs.toString());
+        const formatted = await rs.map((a) => {
+            return {
+                capital: a.capital.toString(),
+                interest: a.interest.toString(),
+                projectId: a.projectId.toString(),
+                repaid: a.repaid.toString(),
+                repayTime: a.repayTime.toString(),
+                status: a.status.toString(),
+            };
+        });
+        console.log("formatted: ", formatted);
+        setBillData(formatted);
+        console.log("BillData:", billData)
+    }
+
+    // 还款
+    const repay = async (projectsPid, projectsvalue)=>{
+        console.log("repay", " in useContract.js")
+        const signer = provider.getSigner();
+        if(!provider){
+            return;
+        }
+        const contract = new Contract(tokenAddress, ABI.abi, signer);
+        await contract.repay(projectsPid, { from: account, value: projectsvalue })
+        .then((transactionResponse) => {
+        console.log('Transaction hash:', transactionResponse.hash);
+        return transactionResponse.wait();
+        }).then((transactionReceipt) => {
+        console.log('Transaction receipt:', transactionReceipt);
+        }).catch((error) => {
+        console.error('Error:', error);
+        });
+    }
+
+
     return {
         createProject,
         launchProjects,
@@ -214,7 +263,9 @@ export function useContract(){
         Projects,
         getAllProjects,
         allProjects,
-        contribute
+        contribute,
+        getBill,
+        repay
 
     }
 }

@@ -27,10 +27,10 @@ import ConformDialog from './conformDialog';
     const [projectsvalue, setprojectsvalue] = useState(0);
 
     const [data, setdata] = useState([]);
-    const { count, increment, decrement, tabledata, setTableData } = useCounterStore();
+    const { count, increment, decrement, tabledata, setTableData, billData, setDillData } = useCounterStore();
 
     // 合约调用
-    const { createProject, getLaunchProjects, getProjects, getAllProjects, allProjects, contribute } = useContract();
+    const { createProject, getLaunchProjects, getProjects, getAllProjects, allProjects, contribute, getBill, repay } = useContract();
 
     // const ListComponent = ({ data }) => {  
     //     console.log("处理数据：", data)
@@ -44,6 +44,26 @@ import ConformDialog from './conformDialog';
     //       </div>  
     //     );  
     //   }; 
+
+    const DataDisplay = ({ data }) => {
+      return (
+          <div>
+              {data.map((item, index) => (
+                  <div key={index}>
+                    <Space>
+                      <a>Capital: {item.capital}; </a> 
+                      <a>Interest: {item.interest}; </a>
+                      <a>Project ID: {item.projectId}; </a>
+                      <a>Repaid: {item.repaid}; </a>
+                      <a>Status: {item.status}; </a>
+                      <a>Repay Time: {new Date(item.repayTime * 1000).toLocaleString()}.</a>
+                    </Space>
+                  </div>
+              ))}
+          </div>
+      );
+    };
+  
 
       // 筹款 表单
       const [componentSize, setComponentSize] = useState('default');
@@ -67,7 +87,6 @@ import ConformDialog from './conformDialog';
       const [selectedRowData, setSelectedRowData] = useState(null);
  
       const handleSubmitInput = async (inputValue) => {
-        // 这里假设你有一个名为 doSomething 的函数，接收输入数据和本行中的值作为参数
         if (selectedRowData) {
           // setTimeout(() => {
             
@@ -89,7 +108,6 @@ import ConformDialog from './conformDialog';
       // const [selectedRowData, setSelectedRowData] = useState(null);
   
       const handleConformSubmitInput = async (inputValue) => {
-        // 这里假设你有一个名为 doSomething 的函数，接收输入数据和本行中的值作为参数
         if (selectedRowData) {
           // setTimeout(() => {
             
@@ -145,26 +163,6 @@ import ConformDialog from './conformDialog';
             return <Tag color={color}>{text}</Tag>;
           },
         },
-        // {
-        //   title: 'Status',
-        //   key: 'status',
-        //   dataIndex: 'status',
-          // render: (_, { status }) => (
-          //   <>
-          //     {status.map((tag) => {
-          //       let color = tag.length > 5 ? 'geekblue' : 'green';
-          //       if (tag === 'loser') {
-          //         color = 'volcano';
-          //       }
-          //       return (
-          //         <Tag color={color} key={tag}>
-          //           {tag.toUpperCase()}
-          //         </Tag>
-          //       );
-          //     })}
-          //   </>
-          // ),
-        // },
         {
           title: 'CollectEndTime',
           dataIndex: 'collectEndTime',
@@ -190,16 +188,6 @@ import ConformDialog from './conformDialog';
           dataIndex: 'repayMethod',
           key: 'repayMethod',
         },
-        // {
-        //   title: 'Action',
-        //   key: 'action',
-        //   render: (_, record) => (
-        //     <Space size="middle">
-        //       <a>Invite {record.name}</a>
-        //       <a>Delete</a>
-        //     </Space>
-        //   ),
-        // },
         {
           title: 'Action',
           render: (text, record) => (
@@ -279,7 +267,6 @@ import ConformDialog from './conformDialog';
         <Web3Provider>
             <Navigate/>
 
-          {/* <StarBackground/> */}
           <Row>
           <Col span={1}>
             </Col>
@@ -339,10 +326,8 @@ import ConformDialog from './conformDialog';
 
             <Row>
           <Col span={1}></Col>
-            <Col span={23}>
+            <Col span={11}>
            
-   
-
             <Form
                 labelCol={{
                     span: 4,
@@ -397,24 +382,43 @@ import ConformDialog from './conformDialog';
                     </Select>
                 </Form.Item> */}
 
-                {/* <Form.Item label="DatePicker">
-                    <DatePicker />
-                </Form.Item>
-                <Form.Item label="InputNumber">
-                    <InputNumber />
-                </Form.Item>
-                <Form.Item label="Switch" valuePropName="checked">
-                    <Switch />
-                </Form.Item> */}
                 <Form.Item label="Commit">
                     <Button color="primary" variant="outlined" htmlType="submit">Commit</Button>
                 </Form.Item>
                 </Form>
                 </Col>
-            </Row>
 
-{/*   
-                    出资  。控制台输出
+                <Col span={11}>
+
+  
+                    获取单个项目账单  :
+                    <Input
+                        placeholder="pid"
+                        type="text"
+                        value={projectsPid}
+                        onChange={(e) => setprojectsPid(e.target.value)}
+                        className={styles.input}
+                    />
+                     {/* <Input
+                      placeholder="value"
+                        type="text"
+                        value={projectsvalue}
+                        onChange={(e) => setprojectsvalue(e.target.value)}
+                        className={styles.input}
+                    /> */}
+                        <Button 
+                        onClick={
+                            async ()=>{
+                              console.log("theAddress to solidity : ", projectsPid)
+                                await getBill(projectsPid);
+                            }} 
+                        type="primary" size="middle">
+                        查看账单
+                    
+                    </Button>
+                    <DataDisplay data={billData} />
+
+                    还款 :
                     <Input
                         placeholder="pid"
                         type="text"
@@ -423,7 +427,7 @@ import ConformDialog from './conformDialog';
                         className={styles.input}
                     />
                      <Input
-                      placeholder="value"
+                      placeholder="repay value"
                         type="text"
                         value={projectsvalue}
                         onChange={(e) => setprojectsvalue(e.target.value)}
@@ -433,12 +437,16 @@ import ConformDialog from './conformDialog';
                         onClick={
                             async ()=>{
                               console.log("theAddress to solidity : ", projectsPid)
-                                await contribute(projectsPid, projectsvalue);
+                                await repay(projectsPid, projectsvalue);
                             }} 
                         type="primary" size="middle">
-                        出资
+                        还款
                     
-                    </Button> */}
+                    </Button>
+                </Col>
+
+            </Row>
+
 
                   
                   
