@@ -178,6 +178,22 @@ export function useContract(){
         console.log(rs)
     }
 
+    function respToContribution(r){
+        console.log(r)
+        return {
+            amount: r.amount.toBigInt(),
+            investor: r.investor.toString(),
+            repaid: r.repaid.toBigInt(),
+            time: r.time.toNumber()
+        }
+    }
+    //出资单
+    const getContributionsByPid = async (pid)=>{
+        const contract = new Contract(tokenAddress, ABI.abi, provider.getSigner());
+        let rs = await contract.getContributionsByPid(pid);
+        return rs.map(r => respToContribution(r))
+    }
+
     const getProjects = async (pid)=>{
         console.log("getProjects", " in useContract.js")
         const signer = provider.getSigner();
@@ -289,6 +305,7 @@ export function useContract(){
         confirmProject,
         getBillsByPid,
         repayProject,
+        getContributionsByPid,
         getProjects,
         Projects,
         getAllProjects,
