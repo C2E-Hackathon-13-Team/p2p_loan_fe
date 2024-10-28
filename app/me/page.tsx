@@ -6,7 +6,7 @@ import { Col, Row } from 'antd';
 import styles  from  './page.module.scss';
 import { useContract } from '../useContract.js'
 import { useEffect } from 'react';
-import { TransactionOutlined,CloseCircleOutlined,FastForwardOutlined  } from '@ant-design/icons';
+import { TransactionOutlined,CloseCircleOutlined,FastForwardOutlined,RiseOutlined  } from '@ant-design/icons';
 import { Avatar, Card, Flex, Switch,Tabs,Modal,Button,Space     } from 'antd';
 import type { TabsProps } from 'antd';
 import React, { useState } from 'react';
@@ -25,7 +25,7 @@ function Me(){
     // 连接钱包
     const { isActive, account,  connector,  provider } = useWeb3React();
     // 用户发起的项目  和 用户出资的项目
-    const { launchProjects,refreshLaunchProjects,contributeProjects, refreshContributeProjects,revocateProject,confirmProject,getBillsByPid,repayProject } = useContract()
+    const { launchProjects,refreshLaunchProjects,contributeProjects, refreshContributeProjects,revocateProject,confirmProject,getBillsByPid,repayProject,getContributionsByPid } = useContract()
 
     //控制加载画面
     const [loading, setLoading] = useState<boolean>(true);
@@ -36,6 +36,7 @@ function Me(){
     const [isRevocateModalOpen, setIsRevocateModalOpen] = useState(false);
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
     const [isRepayModalOpen, setIsRepayModalOpen] = useState(false);
+    const [isInvestInfoModalOpen, setIsInvestInfoModalOpen] = useState(false);
 
     //当前项目ID
     const [selectedProject, setSelectedProject] = useState<BigInt>(BigInt(0));
@@ -43,6 +44,8 @@ function Me(){
     const [billDataSource, setBillDataSource] = useState<any[]>([]);
     //偿还金额
     const [repayAmount, setRepayAmount] = useState<number>(0);
+    //投资信息
+    const [investDataSource, setInvestDataSource] = useState<any[]>([]);
 
     
 
@@ -126,11 +129,12 @@ function Me(){
     async function refreshBills(pid){
         let bills = await getBillsByPid(pid)
         bills.forEach((b,i)=>{
-            b.key = i,
-            b.capital = formatAmount(b.capital),
-            b.interest = formatAmount(b.interest),
-            b.repaid = formatAmount(b.repaid),
-            b.status = getBillStatus(b)
+            b.key = i;
+            b.capital = formatAmount(b.capital);
+            b.interest = formatAmount(b.interest);
+            b.repaid = formatAmount(b.repaid);
+            b.status = getBillStatus(b);
+            b.repayTime = format(new Date(b.repayTime * 1000), 'yyyy-MM-dd HH:mm:ss');
         })
         setBillDataSource(bills)
     }
@@ -189,11 +193,59 @@ function Me(){
     ]
 
 
+    const investColumns = [
+        {
+            title: 'Investor',
+            dataIndex: 'investor',
+            key: 'investor',
+        },
+        {
+            title: 'Amount',
+            dataIndex: 'amount',
+            key: 'amount',
+        },
+        {
+            title: 'Invest Time',
+            dataIndex: 'time',
+            key: 'time',
+        },
+        {
+            title: 'Repaid',
+            dataIndex: 'repaid',
+            key: 'repaid',
+        },
+
+    ]
+
+
+    // async function refreshInvestInfo(pid){
+        
+    // }
+
+    const openInvestInfo = async (pid:BigInt) => {
+        setSelectedProject(pid)
+
+        let cons = await getContributionsByPid(pid)
+        
+        cons.forEach((c,i)=>{
+            c.key = i;
+            c.amount = formatAmount(c.amount);
+            c.investor = truncateStr(c.investor);
+            c.repaid = formatAmount(c.repaid);
+            c.time = format(new Date(c.time * 1000), 'yyyy-MM-dd HH:mm:ss');
+        })
+        setInvestDataSource(cons)
+
+
+        setIsInvestInfoModalOpen(true)
+    };
+
 
     function getActionDoc(p): React.ReactNode[]{
         let result:React.ReactNode[] = [];
 
         if(tabKey == '1'){//我发起的项目
+
             const current = Math.floor(Date.now() / 1000);
             if( p.status == 1 && ( current > p.collectEndTime || p.collected >= p.amount ) ){//可以确认
                 result.push((
@@ -218,8 +270,17 @@ function Me(){
                     </div>
                 ))
             }
+
         }else if(tabKey == '2'){//我出资的项目
 
+        }
+
+        if(p.status >= 2){//可以查看出资单
+            result.push((
+                <div onClick={()=>openInvestInfo(p.pid)}>
+                    <RiseOutlined key='investInfo' className={styles.projectIcon}  /> Invest Info
+                </div>
+            ))
         }
 
         
@@ -318,6 +379,9 @@ function Me(){
                         </>
                     )}>
                     <Table dataSource={billDataSource} columns={billColumns} />
+                </Modal>
+                <Modal title={"Investment Information Of Project "+ selectedProject.toString()} open={isInvestInfoModalOpen} onCancel={()=>setIsInvestInfoModalOpen(false)} width="61.8%" >
+                    <Table dataSource={investDataSource} columns={investColumns} />
                 </Modal>
             </>
         )

@@ -12,7 +12,7 @@ const tokenAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 // sikaiwei dev
 // const tokenAddress = '0xf5C6D6A6ea3C3d344B0c61929dCf871C6E4e1FaF';
 // 2024年10月28日
-const tokenAddress = '0xe4b1cE541bEb0D48b737057819E4266596299fA0';
+// const tokenAddress = '0xe4b1cE541bEb0D48b737057819E4266596299fA0';
 
 
 export function useContract(){
@@ -177,6 +177,22 @@ export function useContract(){
         console.log(rs)
     }
 
+    function respToContribution(r){
+        console.log(r)
+        return {
+            amount: r.amount.toBigInt(),
+            investor: r.investor.toString(),
+            repaid: r.repaid.toBigInt(),
+            time: r.time.toNumber()
+        }
+    }
+    //出资单
+    const getContributionsByPid = async (pid)=>{
+        const contract = new Contract(tokenAddress, ABI.abi, provider.getSigner());
+        let rs = await contract.getContributionsByPid(pid);
+        return rs.map(r => respToContribution(r))
+    }
+
     const getProjects = async (pid)=>{
         console.log("getProjects", " in useContract.js")
         const signer = provider.getSigner();
@@ -288,6 +304,7 @@ export function useContract(){
         confirmProject,
         getBillsByPid,
         repayProject,
+        getContributionsByPid,
         getProjects,
         Projects,
         getAllProjects,
