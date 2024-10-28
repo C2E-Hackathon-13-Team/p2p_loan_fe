@@ -23,8 +23,8 @@ import ConformDialog from './conformDialog';
     
     const [theAddress, settheAddress] = useState("");
     const [pid, setpid] = useState(0);
-    const [projectsPid, setprojectsPid] = useState(0);
-    const [projectsvalue, setprojectsvalue] = useState(0);
+    const [projectsPid, setprojectsPid] = useState();
+    const [projectsvalue, setprojectsvalue] = useState();
 
     const [data, setdata] = useState([]);
     const { count, increment, decrement, tabledata, setTableData, billData, setDillData } = useCounterStore();
@@ -55,7 +55,7 @@ import ConformDialog from './conformDialog';
                       <a>Interest: {item.interest}; </a>
                       <a>Project ID: {item.projectId}; </a>
                       <a>Repaid: {item.repaid}; </a>
-                      <a>Status: {item.status}; </a>
+                      <a>Status: {item.status === '2' ? 'payed' : item.status === '1' ? 'wait' : '未知状态'}</a>
                       <a>Repay Time: {new Date(item.repayTime * 1000).toLocaleString()}.</a>
                     </Space>
                   </div>
@@ -77,6 +77,7 @@ import ConformDialog from './conformDialog';
       //   console.log("name:", values.name)
       // };
 
+      // 提交筹款信息
       const onFinish = async (values) => {
         console.log('Received values of form: ', values); // 处理表单数据
         await createProject(values.amount, values.rate, values.term, values.endtime, values.repayMethod);
@@ -190,18 +191,26 @@ import ConformDialog from './conformDialog';
         },
         {
           title: 'Action',
-          render: (text, record) => (
-            <Button type="link" onClick={async () => {
-              console.log(record.amount, record.pid);
-              await setSelectedRowData(record.pid);
-              setTimeout(() => {
-                console.log(selectedRowData);
-              }, 1000);
-              setVisibleDialog(true);
-            }}>
-              出资
-            </Button>
-          ),
+          render: (text, record) => {
+            const isEligible = record.amount > record.collected;
+          
+            if (isEligible) {
+              return (
+                <Button type="link" onClick={async () => {
+                  console.log(record.amount, record.pid);
+                  await setSelectedRowData(record.pid);
+                  setTimeout(() => {
+                    console.log(selectedRowData);
+                  }, 1000);
+                  setVisibleDialog(true);
+                }}>
+                  出资
+                </Button>
+              );
+            } else {
+              return <Tag color='green'>已筹满</Tag>;
+            }
+          }
         },
         {
           title: 'Pid',
@@ -235,26 +244,45 @@ import ConformDialog from './conformDialog';
         getAllProjects();
       }, [0]);
 
+      // useEffect(()=>{
+      //   setTimeout(()=>{
+      //     const active = connector.activate();
+      //     active.then(()=>{
+      //       // console.log("active",r);
+      //     });
+      //     getAllProjects();
+      //   },1000)
+      // },0)
 
-      useEffect(() => {
+      // useEffect(() => {
+      //   getAllProjects()
         // 从 localStorage 中读取 tabledata 并更新状态
-        const storedtabledata = localStorage.getItem('tabledata');
-        if (storedtabledata !== null) {
-          const parsedData = JSON.parse(storedtabledata);
-          setTableData(parsedData);
-        }
-      }, []);
+        // const storedtabledata = localStorage.getItem('tabledata');
+        // if (storedtabledata !== null) {
+        //   const parsedData = JSON.parse(storedtabledata);
+        //   setTableData(parsedData);
+        // }
+      // }, []);
 
-      useEffect(() => {
-        console.log("allProjects: ", allProjects, "data :", data);
-        // setTableData(allProjects);
-        if (tabledata.length > 0) {
+      // useEffect(() => {
+      //   // 从 localStorage 中读取 tabledata 并更新状态
+      //   const storedtabledata = localStorage.getItem('tabledata');
+      //   if (storedtabledata !== null) {
+      //     const parsedData = JSON.parse(storedtabledata);
+      //     setTableData(parsedData);
+      //   }
+      // }, []);
 
-          localStorage.setItem('tabledata', JSON.stringify(tabledata)); // 将索引存储到 localStorage
-          console.log("tabledata:", tabledata)
-        }
+      // useEffect(() => {
+      //   console.log("allProjects: ", allProjects, "data :", data);
+      //   // setTableData(allProjects);
+      //   if (tabledata.length > 0) {
 
-      }, [tabledata]);
+      //     localStorage.setItem('tabledata', JSON.stringify(tabledata)); // 将索引存储到 localStorage
+      //     console.log("tabledata:", tabledata)
+      //   }
+
+      // }, [tabledata]);
 
       // onClick={
       //   async ()=>{
@@ -319,6 +347,17 @@ import ConformDialog from './conformDialog';
             borderColor: '#7cb305',
             }}>
             <h3>提交筹款信息</h3>
+            </Divider>
+
+            </Col>
+            <Col span={5}/>
+            <Col span={9}>
+            <Divider 
+            orientation="left"  
+            style={{
+            borderColor: '#7cb305',
+            }}>
+            <h3>查看账单</h3>
             </Divider>
 
             </Col>
@@ -387,13 +426,11 @@ import ConformDialog from './conformDialog';
                 </Form.Item>
                 </Form>
                 </Col>
+                {/* 账单 */}
+                <Col span={9}>
 
-                <Col span={11}>
-
-  
-                    获取单个项目账单  :
                     <Input
-                        placeholder="pid"
+                        placeholder="请输入项目ID"
                         type="text"
                         value={projectsPid}
                         onChange={(e) => setprojectsPid(e.target.value)}
@@ -420,7 +457,7 @@ import ConformDialog from './conformDialog';
 
                     还款 :
                     <Input
-                        placeholder="pid"
+                        placeholder="请输入项目ID"
                         type="text"
                         value={projectsPid}
                         onChange={(e) => setprojectsPid(e.target.value)}
