@@ -127,7 +127,6 @@ function Me(){
         let bills = await getBillsByPid(pid)
         bills.forEach((b,i)=>{
             b.key = i,
-            b.projectId = formatAmount(b.projectId),
             b.capital = formatAmount(b.capital),
             b.interest = formatAmount(b.interest),
             b.repaid = formatAmount(b.repaid),
@@ -161,11 +160,6 @@ function Me(){
 
 
     const billColumns = [
-        {
-            title: 'Project ID',
-            dataIndex: 'projectId',
-            key: 'projectId',
-        },
         {
             title: 'Capital',
             dataIndex: 'capital',
@@ -308,7 +302,7 @@ function Me(){
                     <p>Are you sure you want to confirm the project {selectedProject.toString()} ?</p>
                 </Modal>
                 <Modal 
-                    title="Repay Project" 
+                    title={"Repay Project " + selectedProject.toString()}
                     open={isRepayModalOpen} 
                     // onOk={repay} 
                     onCancel={()=>setIsRepayModalOpen(false)} 
