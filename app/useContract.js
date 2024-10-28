@@ -4,9 +4,10 @@ import ABI from '../artifacts/contracts/GLD.sol/LockModule#Loan.json';
 import { useWeb3React } from '@web3-react/core';
 import { useState, useEffect } from 'react';
 import useCounterStore  from '../store/useStore';
+import * as web3 from 'web3'
 
 // const tokenAddress = '0xA51926D9B32622ee286cCfB41dBb53FB962E074E';
-// const tokenAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+const tokenAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 
 // sikaiwei dev
 // const tokenAddress = '0xf5C6D6A6ea3C3d344B0c61929dCf871C6E4e1FaF';
@@ -123,13 +124,14 @@ export function useContract(){
         }
     }
     
-
+    //刷新发起过的项目
     const refreshLaunchProjects = async (address)=>{
         const contract = new Contract(tokenAddress, ABI.abi, provider.getSigner());
         const rs = await contract.getLaunchProjects(address);
         setlaunchProjects(rs.map(r => respToProject(r)));
     }
 
+    //刷新出资过的项目
     const refreshContributeProjects = async (address)=>{
         const contract = new Contract(tokenAddress, ABI.abi, provider.getSigner());
         const rs = await contract.getContributeProjects(address);
@@ -148,6 +150,31 @@ export function useContract(){
         const contract = new Contract(tokenAddress, ABI.abi, provider.getSigner());
         let rs = await contract.confirm(pid);
         rs = await rs.wait();
+    }
+
+    function respToBiil(r){
+        return {
+            projectId: r.projectId.toBigInt(),
+            capital: r.capital.toBigInt(),
+            interest: r.interest.toBigInt(),
+            repaid: r.repaid.toBigInt(),
+            repayTime: r.repayTime.toNumber(),
+            status: r.status.toNumber()
+        }
+    }
+    //获取项目所有账单
+    const getBillsByPid = async (pid)=>{
+        const contract = new Contract(tokenAddress, ABI.abi, provider.getSigner());
+        let rs = await contract.getBillsByPid(pid);
+        return rs.map(r => respToBiil(r))
+    }
+    
+    //还款
+    const repayProject = async (pid,value)=>{
+        const contract = new Contract(tokenAddress, ABI.abi, provider.getSigner());
+        let rs = await contract.repay(pid,{value:web3.utils.toWei(value,'ether')});
+        rs = await rs.wait();
+        console.log(rs)
     }
 
     const getProjects = async (pid)=>{
@@ -259,6 +286,8 @@ export function useContract(){
         refreshContributeProjects,
         revocateProject,
         confirmProject,
+        getBillsByPid,
+        repayProject,
         getProjects,
         Projects,
         getAllProjects,

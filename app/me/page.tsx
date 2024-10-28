@@ -7,12 +7,16 @@ import styles  from  './page.module.scss';
 import { useContract } from '../useContract.js'
 import { useEffect } from 'react';
 import { TransactionOutlined,CloseCircleOutlined,FastForwardOutlined  } from '@ant-design/icons';
-import { Avatar, Card, Flex, Switch,Tabs,Modal    } from 'antd';
+import { Avatar, Card, Flex, Switch,Tabs,Modal,Button,Space     } from 'antd';
 import type { TabsProps } from 'antd';
 import React, { useState } from 'react';
 import * as web3 from 'web3'
 import { format } from 'date-fns';
 import { pl } from 'date-fns/locale';
+import { Table } from "antd" ;
+import type { InputNumberProps } from 'antd';
+import { InputNumber } from 'antd';
+
 
 
 
@@ -21,15 +25,25 @@ function Me(){
     // 连接钱包
     const { isActive, account,  connector,  provider } = useWeb3React();
     // 用户发起的项目  和 用户出资的项目
-    const { launchProjects,refreshLaunchProjects,contributeProjects, refreshContributeProjects,revocateProject,confirmProject } = useContract()
+    const { launchProjects,refreshLaunchProjects,contributeProjects, refreshContributeProjects,revocateProject,confirmProject,getBillsByPid,repayProject } = useContract()
 
     //控制加载画面
     const [loading, setLoading] = useState<boolean>(true);
     //选项卡
     const [tabKey, setTabKey] = useState<string>('1');
+
+    //对话框Model
     const [isRevocateModalOpen, setIsRevocateModalOpen] = useState(false);
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [isRepayModalOpen, setIsRepayModalOpen] = useState(false);
+
+    //当前项目ID
     const [selectedProject, setSelectedProject] = useState<BigInt>(BigInt(0));
+    //账单数据
+    const [billDataSource, setBillDataSource] = useState<any[]>([]);
+    //偿还金额
+    const [repayAmount, setRepayAmount] = useState<number>(0);
+
     
 
     function truncateStr(str:string) {
@@ -43,7 +57,7 @@ function Me(){
 
     useEffect(function(){
         if(isActive && account ) {//账号状态修改的时候更新
-            if(!isRevocateModalOpen && !isConfirmModalOpen){//对话框关闭的时候才更新
+            if(!isRevocateModalOpen && !isConfirmModalOpen && !isRepayModalOpen){//对话框关闭的时候才更新
                 setLoading(true)
                 if(tabKey == '1'){
                     refreshLaunchProjects(account)
@@ -51,10 +65,11 @@ function Me(){
                     refreshContributeProjects(account)
                 }
                 setLoading(false)
+                setRepayAmount(0)
             }
             
         }
-    },[isActive,account,tabKey,isRevocateModalOpen])
+    },[isActive,account,tabKey,isRevocateModalOpen,isConfirmModalOpen,isRepayModalOpen])
 
 
 
@@ -73,6 +88,18 @@ function Me(){
         }else{
             return 'Error'
         }
+    }
+
+    function formatAmount(wei){
+
+        if( wei > 1000000000000000000 ){
+            return Number(web3.utils.fromWei(wei,'ether')).toFixed(4) + ' Ether'
+        }else if( wei > 1000000000 ){
+            return Number(web3.utils.fromWei(wei,'gwei')).toFixed(4) + ' Gwei'
+        }else{
+            return wei + ' Wei'
+        }
+
     }
 
   
@@ -95,6 +122,77 @@ function Me(){
         setSelectedProject(pid)
         setIsConfirmModalOpen(true)
     };
+
+    async function refreshBills(pid){
+        let bills = await getBillsByPid(pid)
+        bills.forEach((b,i)=>{
+            b.key = i,
+            b.projectId = formatAmount(b.projectId),
+            b.capital = formatAmount(b.capital),
+            b.interest = formatAmount(b.interest),
+            b.repaid = formatAmount(b.repaid),
+            b.status = getBillStatus(b)
+        })
+        setBillDataSource(bills)
+    }
+
+    const repay = async () => {
+        await repayProject(selectedProject,repayAmount)
+        refreshBills(selectedProject)
+        setRepayAmount(0)
+    };
+
+    function getBillStatus(b):string{
+        if( b.tatus == 1 && (Date.now() / 1000) < b.repayTime ){
+            return 'Not started';
+        }else if(b.status == 1 && (Date.now() / 1000) >= b.repayTime ){
+            return 'Repaying';
+        }else if(b.status == 2){
+            return 'Over';
+        }
+    }
+
+    const openRepay = async (pid:BigInt) => {
+        setSelectedProject(pid)
+        refreshBills(pid)
+        setIsRepayModalOpen(true)
+    };
+
+
+
+    const billColumns = [
+        {
+            title: 'Project ID',
+            dataIndex: 'projectId',
+            key: 'projectId',
+        },
+        {
+            title: 'Capital',
+            dataIndex: 'capital',
+            key: 'capital',
+        },
+        {
+            title: 'Interest',
+            dataIndex: 'interest',
+            key: 'interest',
+        },
+        {
+            title: 'Repay Time',
+            dataIndex: 'repayTime',
+            key: 'repayTime',
+        },
+        {
+            title: 'Repaid',
+            dataIndex: 'repaid',
+            key: 'repaid',
+        },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+        },
+
+    ]
 
 
 
@@ -121,7 +219,7 @@ function Me(){
 
             if(p.status == 2){//可以还款
                 result.push((
-                    <div>
+                    <div onClick={()=>openRepay(p.pid)}>
                         <FastForwardOutlined key='repay' className={styles.projectIcon}  /> Repay
                     </div>
                 ))
@@ -135,6 +233,11 @@ function Me(){
         return result
 
     }
+
+
+    const onRepayInputChange: InputNumberProps['onChange'] = (value) => setRepayAmount(Number(value.toString()));
+
+
 
 
 
@@ -155,7 +258,7 @@ function Me(){
                                             <>
                                                 <div>  
                                                     <span className={styles.proFieldName} >Amount:</span>
-                                                    <span>{web3.utils.fromWei(p.amount,'ether')} ETH</span>
+                                                    <span>{formatAmount(p.amount)}</span>
                                                 </div>
                                                 <div>
                                                     <span className={styles.proFieldName} >Rate:</span>
@@ -183,11 +286,11 @@ function Me(){
                                                 </div>
                                                 <div>
                                                     <span className={styles.proFieldName} >Launcher:</span>
-                                                    <span>{p.launcher}</span>
+                                                    <span>{truncateStr(p.launcher)}</span>
                                                 </div>
                                                 <div>
                                                     <span className={styles.proFieldName} >Collected:</span>
-                                                    <span>{web3.utils.fromWei(p.collected,'ether')} ETH</span>
+                                                    <span>{formatAmount(p.collected)}</span>
                                                 </div>
                                             </>
                                         }
@@ -203,6 +306,24 @@ function Me(){
                 </Modal>
                 <Modal title="Confirm Project" open={isConfirmModalOpen} onOk={confirm} onCancel={()=>setIsConfirmModalOpen(false)}>
                     <p>Are you sure you want to confirm the project {selectedProject.toString()} ?</p>
+                </Modal>
+                <Modal 
+                    title="Repay Project" 
+                    open={isRepayModalOpen} 
+                    // onOk={repay} 
+                    onCancel={()=>setIsRepayModalOpen(false)} 
+                    width="61.8%" 
+                    footer={(_, { CancelBtn }) => (
+                        <>
+                            <CancelBtn />
+                            <Space.Compact >
+                                <InputNumber min={0} value={repayAmount} onChange={onRepayInputChange} className={styles.repayInput} addonAfter="Ether" />
+                                <Button type="primary" onClick={repay}>Repay</Button>
+                            </Space.Compact>
+                            
+                        </>
+                    )}>
+                    <Table dataSource={billDataSource} columns={billColumns} />
                 </Modal>
             </>
         )
@@ -226,12 +347,12 @@ function Me(){
 
     return (
         <Row>
-            <Col span={5}></Col>
-            <Col span={14}>
+            <Col span={4}></Col>
+            <Col span={16}>
                 <span className={styles.addrHead} >{truncateStr(account || '')}</span>
                 <Tabs defaultActiveKey={tabKey} items={items} onChange={(key)=>setTabKey(key)} />
             </Col>
-            <Col span={5}></Col>
+            <Col span={4}></Col>
         </Row>
     )
 }
