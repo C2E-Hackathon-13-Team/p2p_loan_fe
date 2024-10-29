@@ -45,18 +45,26 @@ import ConformDialog from './conformDialog';
     //     );  
     //   }; 
 
+    // 账单数据展示
     const DataDisplay = ({ data }) => {
       return (
           <div>
               {data.map((item, index) => (
                   <div key={index}>
-                    <Space>
+                    <Space align='baseline' split={<Divider type="vertical" />}>
                       <a>Capital: {item.capital}; </a> 
                       <a>Interest: {item.interest}; </a>
                       <a>Project ID: {item.projectId}; </a>
                       <a>Repaid: {item.repaid}; </a>
-                      <a>Status: {item.status === '2' ? 'payed' : item.status === '1' ? 'wait' : '未知状态'}</a>
+                      {/* <a>Status: {item.status === '2' ? 'payed' : item.status === '1' ? 'wait' : '未知状态'}</a> */}
                       <a>Repay Time: {new Date(item.repayTime * 1000).toLocaleString()}.</a>
+                      {item.status === '2'? (
+                          <Tag color='green'>payed</Tag>
+                        ) : item.status === '1'? (
+                          <Tag color='blue'>waiting</Tag>
+                        ) : (
+                          <a>未知状态</a>
+                        )}
                     </Space>
                   </div>
               ))}
@@ -455,7 +463,13 @@ import ConformDialog from './conformDialog';
                     </Button>
                     <DataDisplay data={billData} />
 
-                    还款 :
+                    <Divider 
+                      orientation="left"  
+                      style={{
+                      borderColor: '#7cb305',
+                      }}>
+                      <h3>还款</h3>
+                      </Divider>
                     <Input
                         placeholder="请输入项目ID"
                         type="text"
