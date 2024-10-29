@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-
+import { motion } from 'framer-motion';
 import { Input,  Button,  Table, Tag, Space, Col, Row, Divider, 
     Form,
     Radio
@@ -302,7 +302,11 @@ import ConformDialog from './conformDialog';
     return (
         <Web3Provider>
             <Navigate/>
-
+            <motion.div
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               transition={{ duration: 1 }}
+           >
           <Row>
           <Col span={1}>
             </Col>
@@ -330,16 +334,21 @@ import ConformDialog from './conformDialog';
           <Col span={22}></Col>
             <Col span={1}>
 
-            <Button 
-                        onClick={
-                          async ()=>{
-                            console.log("theAddress to solidity : ", projectsPid)
-                            await getAllProjects();
-                            }} 
-                            type="primary" size="middle">
-                        刷新列表
-                    
-            </Button>
+              <motion.div
+                whileHover={{ scale: 1.08 }} // 鼠标悬停时放大到1.1倍
+                transition={{ ease: "easeOut", duration: 0.3 }} // 动画过渡方式：easeOut缓动，持续时间0.3s
+              >
+              <Button 
+              onClick={
+                async ()=>{
+                  console.log("theAddress to solidity : ", projectsPid)
+                  await getAllProjects();
+                  }} 
+                  type="primary" size="middle">
+                    刷新列表
+              </Button>
+
+            </motion.div>
               </Col>
             </Row>
             
@@ -497,6 +506,7 @@ import ConformDialog from './conformDialog';
                 </Col>
 
             </Row>
+            </motion.div>
 
 
                   

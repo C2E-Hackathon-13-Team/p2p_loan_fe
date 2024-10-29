@@ -16,6 +16,7 @@ import { pl } from 'date-fns/locale';
 import { Table } from "antd" ;
 import type { InputNumberProps } from 'antd';
 import { InputNumber } from 'antd';
+import { motion } from 'framer-motion';
 
 
 
@@ -424,7 +425,13 @@ export default function MeExport(){
     return (
         <Web3Provider>
             <Navigate/>
-            <Me></Me>
+            <motion.div
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               transition={{ duration: 1 }}
+            >
+                <Me></Me>
+            </motion.div>
         </Web3Provider>
     )
 }

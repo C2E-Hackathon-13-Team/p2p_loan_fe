@@ -2,7 +2,7 @@
 
 import React from 'react';
 // import { useWeb3React } from '@web3-react/core';
-
+import { motion } from 'framer-motion';
 // import Link from "next/link";
 import styles from "./page.module.css";
 // import {  Button, Tooltip } from "antd";
@@ -26,7 +26,12 @@ function Vote_o() {
   
     return (
         <Web3Provider>
-            <Navigate/>
+        <Navigate/>
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+        >
         <div className={styles.page}>
         <main className={styles.main}>
 
@@ -58,12 +63,14 @@ Web3 P2P借贷平台是一个基于区块链技术的点对点金融借贷平台
 隐私保护：平台注重用户隐私保护，采用了零知识证明等先进技术，确保了用户的隐私信息不被泄露。
 <p></p>
 <h4>
-    综上所述，Web3 P2P借贷平台以其去中心化、透明和安全的技术特点，以及降低交易成本、提高资���利用效率、增强交易透明度和保障用户权益的平台优势，为用户提供了更加便捷、高效和安全的借贷服务。
+    综上所述，Web3 P2P借贷平台以其去中心化、透明和安全的技术特点，以及降低交易成本、提高资金利用效率、增强交易透明度和保障用户权益的平台优势，为用户提供了更加便捷、高效和安全的借贷服务。
 </h4>       
             </label>
 
         </main>
         </div>
+        </motion.div>
+
         </Web3Provider>
     )  
 }
