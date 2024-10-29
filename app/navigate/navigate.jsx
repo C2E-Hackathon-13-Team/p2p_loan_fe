@@ -29,6 +29,7 @@ import styles from "./navigate.module.css"; // 确保路径正确
 import { UserOutlined } from '@ant-design/icons';
 import { Avatar,  Button, Flex } from 'antd';
 import { useWeb3React } from '@web3-react/core';
+import { motion } from 'framer-motion';
 // import { useContract } from '../useContract';
 
 export default function Navigate() {
@@ -99,12 +100,7 @@ export default function Navigate() {
                 {/* connect wallet */}
             </Button>
 
-            <Avatar
-                style={{
-                    backgroundColor: '#87d068',
-                }}
-                icon={<UserOutlined />}
-            />
+            <Avatar src={<img src="/header.jpeg" alt="avatar" />} />
             </Flex>
         </nav>
     );

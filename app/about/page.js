@@ -10,7 +10,7 @@ import { Web3Provider } from '../Web3Provider.jsx'
 // import { useContract } from '../useContract';
 import Navigate from '../navigate/navigate';
 // import StarBackground from '../particles/ParticleBackground';
-
+import header from '../../public/header.png';
 
 function Vote_o() {
 // export default function Vote() {
@@ -66,6 +66,37 @@ Web3 P2P借贷平台是一个基于区块链技术的点对点金融借贷平台
     综上所述，Web3 P2P借贷平台以其去中心化、透明和安全的技术特点，以及降低交易成本、提高资金利用效率、增强交易透明度和保障用户权益的平台优势，为用户提供了更加便捷、高效和安全的借贷服务。
 </h4>       
             </label>
+
+ 
+
+{/* 
+            <motion.img
+                src="/header.jpeg"
+                alt="Animated Image"
+                initial={{ scale: 0.09 }}
+                // animate={{ scale: 0.1 }}
+                animate={{ rotate: [0, 360] }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+            /> */}
+
+            {/* <div style={{
+                 width: '20px',
+                 height: '20px',
+                 position: 'relative'
+             }}>
+                 <motion.img
+                     src="/header.jpeg"
+                     alt="Animated Image"
+                     alt="Animated Image"
+                     style={{
+                         width: '50px',
+                         height: '40px'
+                     }}
+                     initial={{ rotate: 0 }}
+                     animate={{ rotate: [0, 360] }}
+                     transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                 />
+             </div> */}
 
         </main>
         </div>

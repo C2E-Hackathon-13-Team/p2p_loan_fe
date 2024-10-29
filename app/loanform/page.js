@@ -335,7 +335,7 @@ import ConformDialog from './conformDialog';
             <Col span={1}>
 
               <motion.div
-                whileHover={{ scale: 1.08 }} // 鼠标悬停时放大到1.1倍
+                whileHover={{ scale: [null, 1.1, 1.08] }} // 鼠标悬停时放大到1.1倍
                 transition={{ ease: "easeOut", duration: 0.3 }} // 动画过渡方式：easeOut缓动，持续时间0.3s
               >
               <Button 
@@ -439,7 +439,12 @@ import ConformDialog from './conformDialog';
                 </Form.Item> */}
 
                 <Form.Item label="Commit">
+                  <motion.div
+                  whileHover={{ scale: [null, 1.05, 1.03] }} // 鼠标悬停时放大到1.1倍
+                  transition={{ ease: "easeOut", duration: 0.3 }} // 动画过渡方式：easeOut缓动，持续时间0.3s
+                  >
                     <Button color="primary" variant="outlined" htmlType="submit">Commit</Button>
+                  </motion.div>
                 </Form.Item>
                 </Form>
                 </Col>
@@ -460,16 +465,21 @@ import ConformDialog from './conformDialog';
                         onChange={(e) => setprojectsvalue(e.target.value)}
                         className={styles.input}
                     /> */}
-                        <Button 
-                        onClick={
-                            async ()=>{
-                              console.log("theAddress to solidity : ", projectsPid)
-                                await getBill(projectsPid);
-                            }} 
-                        type="primary" size="middle">
-                        查看账单
-                    
+
+                      <motion.div
+                        whileHover={{ scale: [null, 1.02, 1.01] }} // 鼠标悬停时放大到1.1倍
+                        transition={{ ease: "easeOut", duration: 0.3 }} // 动画过渡方式：easeOut缓动，持续时间0.3s
+                      >
+                      <Button 
+                      onClick={
+                          async ()=>{
+                            console.log("theAddress to solidity : ", projectsPid)
+                              await getBill(projectsPid);
+                          }} 
+                      type="primary" size="middle">
+                      查看账单
                     </Button>
+                    </motion.div>
                     <DataDisplay data={billData} />
 
                     <Divider 
@@ -493,6 +503,10 @@ import ConformDialog from './conformDialog';
                         onChange={(e) => setprojectsvalue(e.target.value)}
                         className={styles.input}
                     />
+                      <motion.div
+                        whileHover={{ scale: [null, 1.02, 1.01] }} // 鼠标悬停时放大到1.1倍
+                        transition={{ ease: "easeOut", duration: 0.3 }} // 动画过渡方式：easeOut缓动，持续时间0.3s
+                      >
                         <Button 
                         onClick={
                             async ()=>{
@@ -503,6 +517,7 @@ import ConformDialog from './conformDialog';
                         还款
                     
                     </Button>
+                    </motion.div>
                 </Col>
 
             </Row>
