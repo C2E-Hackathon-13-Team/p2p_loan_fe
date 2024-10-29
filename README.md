@@ -8,3 +8,4 @@ useContract.js  修改合约地址： const tokenAddress = '0xA51926D9B32622ee28
 npm run dev
 
 soldev
+new address
