@@ -100,7 +100,7 @@ export default function Navigate() {
                 {/* connect wallet */}
             </Button>
 
-            <Avatar src={<img src="/header.jpeg" alt="avatar" />} />
+            <Avatar src={<img src="/header.jpg" alt="avatar" />} />
             </Flex>
         </nav>
     );

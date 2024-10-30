@@ -358,6 +358,8 @@ import ConformDialog from './conformDialog';
             <Row>
           <Col span={2}></Col>
             <Col span={5}>
+
+
             <Divider 
             orientation="left"  
             style={{
@@ -376,14 +378,14 @@ import ConformDialog from './conformDialog';
             }}>
             <h3>查看账单</h3>
             </Divider>
-
             </Col>
             </Row>
 
             <Row>
           <Col span={1}></Col>
-            <Col span={11}>
-           
+            <Col span={6}>
+            <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '8px' }}>
+
             <Form
                 labelCol={{
                     span: 4,
@@ -447,25 +449,24 @@ import ConformDialog from './conformDialog';
                   </motion.div>
                 </Form.Item>
                 </Form>
+                </div>
                 </Col>
+                <Col span={5}></Col>
+
                 {/* 账单 */}
-                <Col span={9}>
+                <Col span={10}>
+                <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '8px' }}>
+
+                  <Space>
 
                     <Input
-                        placeholder="请输入项目ID"
+                        placeholder="项目ID"
                         type="text"
                         value={projectsPid}
                         onChange={(e) => setprojectsPid(e.target.value)}
                         className={styles.input}
+                        style={{ width: '100px' }}
                     />
-                     {/* <Input
-                      placeholder="value"
-                        type="text"
-                        value={projectsvalue}
-                        onChange={(e) => setprojectsvalue(e.target.value)}
-                        className={styles.input}
-                    /> */}
-
                       <motion.div
                         whileHover={{ scale: [null, 1.02, 1.01] }} // 鼠标悬停时放大到1.1倍
                         transition={{ ease: "easeOut", duration: 0.3 }} // 动画过渡方式：easeOut缓动，持续时间0.3s
@@ -480,6 +481,8 @@ import ConformDialog from './conformDialog';
                       查看账单
                     </Button>
                     </motion.div>
+                  </Space>
+
                     <DataDisplay data={billData} />
 
                     <Divider 
@@ -489,12 +492,16 @@ import ConformDialog from './conformDialog';
                       }}>
                       <h3>还款</h3>
                       </Divider>
+                      <Space>
+
                     <Input
-                        placeholder="请输入项目ID"
+                        placeholder="项目ID"
                         type="text"
                         value={projectsPid}
                         onChange={(e) => setprojectsPid(e.target.value)}
                         className={styles.input}
+                        style={{ width: '100px' }}
+
                     />
                      <Input
                       placeholder="repay value"
@@ -502,6 +509,8 @@ import ConformDialog from './conformDialog';
                         value={projectsvalue}
                         onChange={(e) => setprojectsvalue(e.target.value)}
                         className={styles.input}
+                        style={{ width: '200px' }}
+
                     />
                       <motion.div
                         whileHover={{ scale: [null, 1.02, 1.01] }} // 鼠标悬停时放大到1.1倍
@@ -518,6 +527,9 @@ import ConformDialog from './conformDialog';
                     
                     </Button>
                     </motion.div>
+                    </Space>
+
+                    </div>
                 </Col>
 
             </Row>
