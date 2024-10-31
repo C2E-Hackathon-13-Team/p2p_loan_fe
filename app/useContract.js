@@ -21,7 +21,7 @@ export function useContract(){
     // const [balanceb, setBalanceb] = useState(0);
     const [launchProjects, setlaunchProjects] = useState([]);
     const [contributeProjects, setContributeProjects] = useState([]);
-    const [allProjects, setallProjects] = useState([]);
+    // const [allProjects, setallProjects] = useState([]);
     const [Projects, setProjects] = useState({
         amount: 0,
         rate: 0,
@@ -34,7 +34,7 @@ export function useContract(){
         currentBill: 0
     });
 
-    const { count, increment, decrement, tabledata, setTableData, billData, setBillData } = useCounterStore();
+    const {  tabledata, setTableData, billData, setBillData } = useCounterStore();
 
     // useEffect(()=>{
     //     const signer = provider.getSigner();
@@ -143,14 +143,16 @@ export function useContract(){
     const revocateProject = async (pid)=>{
         const contract = new Contract(tokenAddress, ABI.abi, provider.getSigner());
         let rs = await contract.revocateProject(pid);
-        rs = await rs.wait();
+        await rs.wait();
+        // rs = await rs.wait();
     }
 
     //确认
     const confirmProject = async (pid)=>{
         const contract = new Contract(tokenAddress, ABI.abi, provider.getSigner());
         let rs = await contract.confirm(pid);
-        rs = await rs.wait();
+        await rs.wait();
+        // rs = await rs.wait();
     }
 
     function respToBiil(r){
@@ -309,7 +311,7 @@ export function useContract(){
         getProjects,
         Projects,
         getAllProjects,
-        allProjects,
+        // allProjects,
         contribute,
         getBill,
         repay

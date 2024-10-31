@@ -10,7 +10,6 @@ import { useContract } from '../useContract';
 import Navigate from '../navigate/navigate';
 import useCounterStore from '../../store/useStore';
 import InputDialog from './InputDialog';
-import ConformDialog from './conformDialog';
 import { useWeb3React } from '@web3-react/core';
 
 // import StarBackground from '../particles/ParticleBackground';
@@ -20,17 +19,15 @@ import { useWeb3React } from '@web3-react/core';
   
   function Vote_o() {
     
-    const [theAddress, settheAddress] = useState("");
-    const [pid, setpid] = useState(0);
     const [projectsPid, setprojectsPid] = useState();
     const [projectsvalue, setprojectsvalue] = useState();
 
-    const [data, setdata] = useState([]);
-    const { count, increment, decrement, tabledata, setTableData, billData, setDillData } = useCounterStore();
+    // const [data, setdata] = useState([]);
+    const {   tabledata,  billData } = useCounterStore();
     // 连接钱包
     const { isActive, account,  connector,  provider } = useWeb3React();
     // 合约调用
-    const { createProject, getLaunchProjects, getProjects, getAllProjects, allProjects, contribute, getBill, repay } = useContract();
+    const { createProject,  getAllProjects, allProjects, contribute, getBill, repay } = useContract();
 
     // const ListComponent = ({ data }) => {  
     //     console.log("处理数据：", data)
@@ -113,25 +110,25 @@ import { useWeb3React } from '@web3-react/core';
       };
 
       // 确认收款对话框
-      const [visibleConformDialog, setVisibleConformDialog] = useState(false);
+      // const [visibleConformDialog, setVisibleConformDialog] = useState(false);
       // const [selectedRowData, setSelectedRowData] = useState(null);
   
-      const handleConformSubmitInput = async (inputValue) => {
-        if (selectedRowData) {
-          // setTimeout(() => {
+      // const handleConformSubmitInput = async (inputValue) => {
+      //   if (selectedRowData) {
+      //     // setTimeout(() => {
             
-            console.log("commit data: ", inputValue, selectedRowData);
-            // async ()=>{
-              await contribute(selectedRowData, inputValue);
-            // }
-          // }, 1000);
-        }
-      };
+      //       console.log("commit data: ", inputValue, selectedRowData);
+      //       // async ()=>{
+      //         await contribute(selectedRowData, inputValue);
+      //       // }
+      //     // }, 1000);
+      //   }
+      // };
   
-      const handleConformCancelDialog = () => {
-        setVisibleDialog(false);
-        setSelectedRowData(null);
-      };
+      // const handleConformCancelDialog = () => {
+      //   setVisibleDialog(false);
+      //   setSelectedRowData(null);
+      // };
 
       // status 映射
       const statusMapping = {
@@ -238,7 +235,7 @@ import { useWeb3React } from '@web3-react/core';
       }, [selectedRowData, visibleDialog]);
 
       useEffect(() => {
-        console.log("useEffect: ", allProjects, data);
+        console.log("useEffect: ", allProjects, );
         getAllProjects();
       }, [isActive, account,  connector,  provider]);
  

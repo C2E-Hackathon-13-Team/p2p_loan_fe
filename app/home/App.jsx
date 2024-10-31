@@ -2,7 +2,6 @@
 import { useWeb3React } from '@web3-react/core';
 import { useEffect } from 'react';
 import {motion} from 'framer-motion';
-import { Button } from 'antd';
 // import { useContract } from '../useContract';
 // import { Input, label, Button, Tooltip } from "antd";
 // import StarBackground from '../particles/ParticleBackground';

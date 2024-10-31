@@ -10,7 +10,6 @@ import { Web3Provider } from '../Web3Provider.jsx'
 // import { useContract } from '../useContract';
 import Navigate from '../navigate/navigate';
 // import StarBackground from '../particles/ParticleBackground';
-import header from '../../public/header.png';
 
 function Vote_o() {
 // export default function Vote() {
