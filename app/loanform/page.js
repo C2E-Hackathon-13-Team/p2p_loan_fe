@@ -197,7 +197,7 @@ import { useWeb3React } from '@web3-react/core';
         {
           title: 'Action',
           render: (text, record) => {
-            const isEligible = record.amount > record.collected;
+            const isEligible = parseInt(record.amount) > parseInt(record.collected);
           
             if (isEligible) {
               return (

@@ -4,7 +4,9 @@ import ABI from '../artifacts/contracts/GLD.sol/LockModule#Loan.json';
 import { useWeb3React } from '@web3-react/core';
 import { useState, useEffect } from 'react';
 import useCounterStore  from '../store/useStore';
-import * as web3 from 'web3'
+import * as web3 from 'web3';
+import { message } from 'antd';
+
 
 // const tokenAddress = '0xA51926D9B32622ee286cCfB41dBb53FB962E074E';
 // const tokenAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
@@ -87,11 +89,14 @@ export function useContract(){
         await contract.contribute(projectsPid, { from: account, value: projectsvalue })
          .then((transactionResponse) => {
             console.log('Transaction hash:', transactionResponse.hash);
+            message.success('交易已发起');
             return transactionResponse.wait();
           }).then((transactionReceipt) => {
             console.log('Transaction receipt:', transactionReceipt);
+            message.success('交易成功。');
           }).catch((error) => {
             console.error('Error:', error);
+            message.error('交易失败：' + error.message);
           });
     }
 
