@@ -36,9 +36,9 @@ function Vote_o() {
         <main className={styles.main}>
 
         {/* <StarBackground/> */}
-            <h1 >Loan</h1>
+            <h1 style={{ color: 'white' }}>Loan</h1>
 
-            <label>
+            <label style={{ color: 'white' }}>
             Web3 P2P借贷平台是一种基于Web3技术和区块链的去中心化金融服务平台，它结合了P2P借贷和Web3技术的优势，为用户提供了更加安全、透明和高效的借贷服务。
 
 <h2>一、平台概述</h2>

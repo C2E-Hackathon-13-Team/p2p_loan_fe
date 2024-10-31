@@ -311,54 +311,55 @@ import ConformDialog from './conformDialog';
           <Col span={1}>
             </Col>
             <Col span={23}>
-              <Divider 
-            orientation="left"  
-            style={{
-            borderColor: '#7cb305',
-            }}>
-              <h1>Loan Platform</h1>
+              <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '8px' }}>
+                <Divider 
+                orientation="left"  
+                style={{
+                borderColor: '#7cb305',
+                }}>
+                  <h1>Loan Platform</h1>
 
-            </Divider>
+                </Divider>
   
             <Table columns={columns} dataSource={tabledata} />
+
+              <Row>
+              <Col span={22}></Col>
+              <Col span={1}>
+                <motion.div
+                    whileHover={{ scale: [null, 1.1, 1.08] }} // 鼠标悬停时放大到1.1倍
+                    transition={{ ease: "easeOut", duration: 0.3 }} // 动画过渡方式：easeOut缓动，持续时间0.3s
+                  >
+                  <Button 
+                  onClick={
+                    async ()=>{
+                      console.log("theAddress to solidity : ", projectsPid)
+                      await getAllProjects();
+                      }} 
+                      type="primary" size="middle">
+                        刷新列表
+                  </Button>
+
+                </motion.div>
+              </Col>
+              </Row>
+            </div>
+
             <InputDialog
               onSubmit={handleSubmitInput}
               visible={visibleDialog}
               onCancel={handleCancelDialog}
               defaultValue=""
             />
-            </Col>
-            </Row>
 
-          <Row>
-          <Col span={22}></Col>
-            <Col span={1}>
+          </Col>
+        </Row>
 
-              <motion.div
-                whileHover={{ scale: [null, 1.1, 1.08] }} // 鼠标悬停时放大到1.1倍
-                transition={{ ease: "easeOut", duration: 0.3 }} // 动画过渡方式：easeOut缓动，持续时间0.3s
-              >
-              <Button 
-              onClick={
-                async ()=>{
-                  console.log("theAddress to solidity : ", projectsPid)
-                  await getAllProjects();
-                  }} 
-                  type="primary" size="middle">
-                    刷新列表
-              </Button>
 
-            </motion.div>
-              </Col>
-            </Row>
-            
-        {/* <div className={styles.page}> */}
-        {/* <main className={styles.main}> */}
-            {/* // 表单 */}
-            <Row>
-          <Col span={2}></Col>
-            <Col span={5}>
-
+        <Row>
+          <Col span={1}></Col>
+            <Col span={6}>
+            <div style={{ backgroundColor: 'white', margin: '15px', padding: '15px', borderRadius: '8px' }}>
 
             <Divider 
             orientation="left"  
@@ -367,24 +368,6 @@ import ConformDialog from './conformDialog';
             }}>
             <h3>提交筹款信息</h3>
             </Divider>
-
-            </Col>
-            <Col span={5}/>
-            <Col span={9}>
-            <Divider 
-            orientation="left"  
-            style={{
-            borderColor: '#7cb305',
-            }}>
-            <h3>查看账单</h3>
-            </Divider>
-            </Col>
-            </Row>
-
-            <Row>
-          <Col span={1}></Col>
-            <Col span={6}>
-            <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '8px' }}>
 
             <Form
                 labelCol={{
@@ -451,14 +434,19 @@ import ConformDialog from './conformDialog';
                 </Form>
                 </div>
                 </Col>
+
                 <Col span={5}></Col>
 
-                {/* 账单 */}
                 <Col span={10}>
-                <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '8px' }}>
-
+                <div style={{ backgroundColor: 'white', margin: '15px', padding: '15px', borderRadius: '8px' }}>
+                  <Divider 
+                  orientation="left"  
+                  style={{
+                  borderColor: '#7cb305',
+                  }}>
+                  <h3>查看账单</h3>
+                  </Divider>
                   <Space>
-
                     <Input
                         placeholder="项目ID"
                         type="text"
@@ -468,18 +456,18 @@ import ConformDialog from './conformDialog';
                         style={{ width: '100px' }}
                     />
                       <motion.div
-                        whileHover={{ scale: [null, 1.02, 1.01] }} // 鼠标悬停时放大到1.1倍
+                        whileHover={{ scale: [null, 1.1, 1.08] }} // 鼠标悬停时放大到1.1倍
                         transition={{ ease: "easeOut", duration: 0.3 }} // 动画过渡方式：easeOut缓动，持续时间0.3s
                       >
-                      <Button 
-                      onClick={
-                          async ()=>{
-                            console.log("theAddress to solidity : ", projectsPid)
-                              await getBill(projectsPid);
-                          }} 
-                      type="primary" size="middle">
-                      查看账单
-                    </Button>
+                    <Button 
+                    onClick={
+                        async ()=>{
+                          console.log("theAddress to solidity : ", projectsPid)
+                            await getBill(projectsPid);
+                        }} 
+                    type="primary" size="middle">
+                    查看账单
+                  </Button>
                     </motion.div>
                   </Space>
 
@@ -494,15 +482,15 @@ import ConformDialog from './conformDialog';
                       </Divider>
                       <Space>
 
-                    <Input
-                        placeholder="项目ID"
-                        type="text"
-                        value={projectsPid}
-                        onChange={(e) => setprojectsPid(e.target.value)}
-                        className={styles.input}
-                        style={{ width: '100px' }}
+                      <Input
+                          placeholder="项目ID"
+                          type="text"
+                          value={projectsPid}
+                          onChange={(e) => setprojectsPid(e.target.value)}
+                          className={styles.input}
+                          style={{ width: '100px' }}
 
-                    />
+                      />
                      <Input
                       placeholder="repay value"
                         type="text"
@@ -511,9 +499,9 @@ import ConformDialog from './conformDialog';
                         className={styles.input}
                         style={{ width: '200px' }}
 
-                    />
+                      />
                       <motion.div
-                        whileHover={{ scale: [null, 1.02, 1.01] }} // 鼠标悬停时放大到1.1倍
+                        whileHover={{ scale: [null, 1.1, 1.08] }} // 鼠标悬停时放大到1.1倍
                         transition={{ ease: "easeOut", duration: 0.3 }} // 动画过渡方式：easeOut缓动，持续时间0.3s
                       >
                         <Button 
@@ -524,8 +512,7 @@ import ConformDialog from './conformDialog';
                             }} 
                         type="primary" size="middle">
                         还款
-                    
-                    </Button>
+                      </Button>
                     </motion.div>
                     </Space>
 
