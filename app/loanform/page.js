@@ -13,6 +13,7 @@ import Navigate from '../navigate/navigate';
 import useCounterStore from '../../store/useStore';
 import InputDialog from './InputDialog';
 import ConformDialog from './conformDialog';
+import { useWeb3React } from '@web3-react/core';
 
 // import StarBackground from '../particles/ParticleBackground';
 
@@ -28,7 +29,8 @@ import ConformDialog from './conformDialog';
 
     const [data, setdata] = useState([]);
     const { count, increment, decrement, tabledata, setTableData, billData, setDillData } = useCounterStore();
-
+    // 连接钱包
+    const { isActive, account,  connector,  provider } = useWeb3React();
     // 合约调用
     const { createProject, getLaunchProjects, getProjects, getAllProjects, allProjects, contribute, getBill, repay } = useContract();
 
@@ -245,12 +247,12 @@ import ConformDialog from './conformDialog';
         }
       }, [selectedRowData, visibleDialog]);
 
-
       useEffect(() => {
         console.log("useEffect: ", allProjects, data);
-
         getAllProjects();
-      }, [0]);
+      }, [isActive, account,  connector,  provider]);
+ 
+
 
       // useEffect(()=>{
       //   setTimeout(()=>{
