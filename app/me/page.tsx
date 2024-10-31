@@ -18,10 +18,6 @@ import type { InputNumberProps } from 'antd';
 import { InputNumber } from 'antd';
 import { motion } from 'framer-motion';
 
-
-
-
-
 function Me(){
     // 连接钱包
     const { isActive, account,  connector,  provider } = useWeb3React();
