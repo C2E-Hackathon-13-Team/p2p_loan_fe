@@ -2,10 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Input,  Button,  Table, Tag, Space, Col, Row, Divider, 
-    Form,
-    Radio
-     } from "antd";
+import { Input,  Button,  Table, Tag, Space, Col, Row, Divider, Tabs,
+    Form, Radio } from "antd";
 import styles from "./page.module.css";
 import { Web3Provider } from '../Web3Provider.jsx'
 import { useContract } from '../useContract';
@@ -229,15 +227,7 @@ import { useWeb3React } from '@web3-react/core';
         },
       ];
 
-      // setTimeout(() => {
-      //   console.log("setTimeout: ", allProjects, data);
-      //   getAllProjects();
-      // }, 60000);
 
-      // setInterval(() => {
-      //   console.log("setTimeout: ", allProjects, data);
-      //   getAllProjects();
-      // }, 3000);
 
       // 更新选中行的pid到 出资按钮
       useEffect(() => {
@@ -252,195 +242,90 @@ import { useWeb3React } from '@web3-react/core';
         getAllProjects();
       }, [isActive, account,  connector,  provider]);
  
+      // 标签页 定义筹款页面
+      function tabPageLoan() {
+        return (          
+        <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '8px' }}>
 
+        <Divider 
+        orientation="left"  
+        style={{
+        borderColor: '#7cb305',
+        }}>
+        <h3>提交筹款信息</h3>
+        </Divider>
 
-      // useEffect(()=>{
-      //   setTimeout(()=>{
-      //     const active = connector.activate();
-      //     active.then(()=>{
-      //       // console.log("active",r);
-      //     });
-      //     getAllProjects();
-      //   },1000)
-      // },0)
-
-      // useEffect(() => {
-      //   getAllProjects()
-        // 从 localStorage 中读取 tabledata 并更新状态
-        // const storedtabledata = localStorage.getItem('tabledata');
-        // if (storedtabledata !== null) {
-        //   const parsedData = JSON.parse(storedtabledata);
-        //   setTableData(parsedData);
-        // }
-      // }, []);
-
-      // useEffect(() => {
-      //   // 从 localStorage 中读取 tabledata 并更新状态
-      //   const storedtabledata = localStorage.getItem('tabledata');
-      //   if (storedtabledata !== null) {
-      //     const parsedData = JSON.parse(storedtabledata);
-      //     setTableData(parsedData);
-      //   }
-      // }, []);
-
-      // useEffect(() => {
-      //   console.log("allProjects: ", allProjects, "data :", data);
-      //   // setTableData(allProjects);
-      //   if (tabledata.length > 0) {
-
-      //     localStorage.setItem('tabledata', JSON.stringify(tabledata)); // 将索引存储到 localStorage
-      //     console.log("tabledata:", tabledata)
-      //   }
-
-      // }, [tabledata]);
-
-      // onClick={
-      //   async ()=>{
-      //       console.log(candidateName)
-      //       await addCandidate(candidateName);
-      //   }} 
-
-      // zustand data
-    return (
-        <Web3Provider>
-            <Navigate/>
-            <motion.div
-               initial={{ opacity: 0 }}
-               animate={{ opacity: 1 }}
-               transition={{ duration: 1 }}
-           >
-          <Row>
-          <Col span={1}>
-            </Col>
-            <Col span={23}>
-              <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '8px' }}>
-                <Divider 
-                orientation="left"  
-                style={{
-                borderColor: '#7cb305',
-                }}>
-                  <h1>Loan Platform</h1>
-
-                </Divider>
-  
-            <Table columns={columns} dataSource={tabledata} />
-
-              <Row>
-              <Col span={22}></Col>
-              <Col span={1}>
-                <motion.div
-                    whileHover={{ scale: [null, 1.1, 1.08] }} // 鼠标悬停时放大到1.1倍
-                    transition={{ ease: "easeOut", duration: 0.3 }} // 动画过渡方式：easeOut缓动，持续时间0.3s
-                  >
-                  <Button 
-                  onClick={
-                    async ()=>{
-                      console.log("theAddress to solidity : ", projectsPid)
-                      await getAllProjects();
-                      }} 
-                      type="primary" size="middle">
-                        刷新列表
-                  </Button>
-
-                </motion.div>
-              </Col>
-              </Row>
-            </div>
-
-            <InputDialog
-              onSubmit={handleSubmitInput}
-              visible={visibleDialog}
-              onCancel={handleCancelDialog}
-              defaultValue=""
-            />
-
-          </Col>
-        </Row>
-
-
-        <Row>
-          <Col span={1}></Col>
-            <Col span={6}>
-            <div style={{ backgroundColor: 'white', margin: '15px', padding: '15px', borderRadius: '8px' }}>
-
-            <Divider 
-            orientation="left"  
+        <Form
+            labelCol={{
+                span: 4,
+            }}
+            wrapperCol={{
+                span: 14,
+            }}
+            layout="horizontal"
+            initialValues={{
+                size: componentSize,
+            }}
+            onValuesChange={onFormLayoutChange}
+            size={componentSize}
             style={{
-            borderColor: '#7cb305',
-            }}>
-            <h3>提交筹款信息</h3>
-            </Divider>
+                maxWidth: 600,
+            }}
+            form={form}
+            name="basic"
+            onFinish={onFinish} // 设置表单提交处理函数
+            >
+            <Form.Item label="Form Size" name="size">
+                <Radio.Group>
+                <Radio.Button value="small">Small</Radio.Button>
+                <Radio.Button value="default">Default</Radio.Button>
+                <Radio.Button value="large">Large</Radio.Button>
+                </Radio.Group>
+            </Form.Item>
+            <Form.Item label="Amount" name="amount">
+                <Input placeholder="Amount"/>
+            </Form.Item>
+            <Form.Item label="Rate" name="rate"
+                rules={[{ required: true, message: 'Please input your rate' }]}
+            >
+                <Input placeholder="Your rate"/>
+            </Form.Item>
+            <Form.Item label="term/month" name="term">
+                <Input placeholder="Month Num"/>
+            </Form.Item>
+            <Form.Item label="Endtime" name="endtime">
+                <Input placeholder="endtime stamp"/>
+            </Form.Item>
+            <Form.Item label="RepayMethod" name="repayMethod">
+                <Input placeholder="repayMethod"/>
+            </Form.Item>
+            {/* <Form.Item label="Interest Rate" name="rate">
+                <Select placeholder="Select the rate">
+                <Select.Option value="1">1%</Select.Option>
+                <Select.Option value="2">2%</Select.Option>
+                <Select.Option value="3">3%</Select.Option>
+                <Select.Option value="4">4%</Select.Option>
+                <Select.Option value="5">5%</Select.Option>
+                </Select>
+            </Form.Item> */}
 
-            <Form
-                labelCol={{
-                    span: 4,
-                }}
-                wrapperCol={{
-                    span: 14,
-                }}
-                layout="horizontal"
-                initialValues={{
-                    size: componentSize,
-                }}
-                onValuesChange={onFormLayoutChange}
-                size={componentSize}
-                style={{
-                    maxWidth: 600,
-                }}
-                form={form}
-                name="basic"
-                onFinish={onFinish} // 设置表单提交处理函数
-                >
-                <Form.Item label="Form Size" name="size">
-                    <Radio.Group>
-                    <Radio.Button value="small">Small</Radio.Button>
-                    <Radio.Button value="default">Default</Radio.Button>
-                    <Radio.Button value="large">Large</Radio.Button>
-                    </Radio.Group>
-                </Form.Item>
-                <Form.Item label="Amount" name="amount">
-                    <Input placeholder="Amount"/>
-                </Form.Item>
-                <Form.Item label="Rate" name="rate"
-                    rules={[{ required: true, message: 'Please input your rate' }]}
-                >
-                    <Input placeholder="Your rate"/>
-                </Form.Item>
-                <Form.Item label="term/month" name="term">
-                    <Input placeholder="Month Num"/>
-                </Form.Item>
-                <Form.Item label="Endtime" name="endtime">
-                    <Input placeholder="endtime stamp"/>
-                </Form.Item>
-                <Form.Item label="RepayMethod" name="repayMethod">
-                    <Input placeholder="repayMethod"/>
-                </Form.Item>
-                {/* <Form.Item label="Interest Rate" name="rate">
-                    <Select placeholder="Select the rate">
-                    <Select.Option value="1">1%</Select.Option>
-                    <Select.Option value="2">2%</Select.Option>
-                    <Select.Option value="3">3%</Select.Option>
-                    <Select.Option value="4">4%</Select.Option>
-                    <Select.Option value="5">5%</Select.Option>
-                    </Select>
-                </Form.Item> */}
+            <Form.Item label="Commit">
+              <motion.div
+              whileHover={{ scale: [null, 1.05, 1.03] }} // 鼠标悬停时放大到1.1倍
+              transition={{ ease: "easeOut", duration: 0.3 }} // 动画过渡方式：easeOut缓动，持续时间0.3s
+              >
+                <Button color="primary" variant="outlined" htmlType="submit">Commit</Button>
+              </motion.div>
+            </Form.Item>
+            </Form>
+            </div>
+      )
+    }
 
-                <Form.Item label="Commit">
-                  <motion.div
-                  whileHover={{ scale: [null, 1.05, 1.03] }} // 鼠标悬停时放大到1.1倍
-                  transition={{ ease: "easeOut", duration: 0.3 }} // 动画过渡方式：easeOut缓动，持续时间0.3s
-                  >
-                    <Button color="primary" variant="outlined" htmlType="submit">Commit</Button>
-                  </motion.div>
-                </Form.Item>
-                </Form>
-                </div>
-                </Col>
-
-                <Col span={5}></Col>
-
-                <Col span={10}>
-                <div style={{ backgroundColor: 'white', margin: '15px', padding: '15px', borderRadius: '8px' }}>
+      // 标签页 定义筹款页面
+      function tabPageRepay() {
+        return (
+                <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '8px' }}>
                   <Divider 
                   orientation="left"  
                   style={{
@@ -519,16 +404,91 @@ import { useWeb3React } from '@web3-react/core';
                     </Space>
 
                     </div>
-                </Col>
+        )
+        }
 
-            </Row>
-            </motion.div>
+      const items = [
+        {
+          key: '1',
+          label: '筹款',
+          children: tabPageLoan(),
+        },
+        {
+          key: '2',
+          label: '还款',
+          children: tabPageRepay(),
+        },
+      ];
+      // zustand data
+    return (
+        <Web3Provider>
+            <Navigate/>
+            <motion.div
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               transition={{ duration: 1 }}
+           >
+          <Row>
+          <Col span={1}>
+            </Col>
+            <Col span={23}>
+              <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '8px' }}>
+                <Divider 
+                orientation="left"  
+                style={{
+                borderColor: '#7cb305',
+                }}>
+                  <h1>Loan Platform</h1>
+
+                </Divider>
+  
+            <Table columns={columns} dataSource={tabledata} />
+
+              <Row>
+              <Col span={22}></Col>
+              <Col span={1}>
+                <motion.div
+                    whileHover={{ scale: [null, 1.1, 1.08] }} // 鼠标悬停时放大到1.1倍
+                    transition={{ ease: "easeOut", duration: 0.3 }} // 动画过渡方式：easeOut缓动，持续时间0.3s
+                  >
+                  <Button 
+                  onClick={
+                    async ()=>{
+                      console.log("theAddress to solidity : ", projectsPid)
+                      await getAllProjects();
+                      }} 
+                      type="primary" size="middle">
+                        刷新列表
+                  </Button>
+
+                </motion.div>
+              </Col>
+              </Row>
+            </div>
+
+            <InputDialog
+              onSubmit={handleSubmitInput}
+              visible={visibleDialog}
+              onCancel={handleCancelDialog}
+              defaultValue=""
+            />
+
+          </Col>
+        </Row>
 
 
-                  
-                  
+
+            <Row>
+              <Col span={1}></Col>
+              <Col span={10}>
+              <div style={{ backgroundColor: 'white', marginTop: '10px', padding: '1px', borderRadius: '8px' }}>
+                <Tabs defaultActiveKey="1" centered items={items}  />
+              </div>    
+              </Col>
+            </Row> 
         {/* </main> */}
         {/* </div> */}
+          </motion.div>
         </Web3Provider>
     )  
 }

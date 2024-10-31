@@ -404,8 +404,10 @@ function Me(){
         <Row>
             <Col span={4}></Col>
             <Col span={16}>
+            <div style={{ backgroundColor: 'white', marginTop: '8px', padding: '15px', borderRadius: '8px' }}>
                 <span className={styles.addrHead} >{truncateStr(account || '')}</span>
                 <Tabs defaultActiveKey={tabKey} items={items} onChange={(key)=>setTabKey(key)} />
+            </div>
             </Col>
             <Col span={4}></Col>
         </Row>
