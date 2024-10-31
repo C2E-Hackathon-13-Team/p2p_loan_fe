@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-
+import { motion } from 'framer-motion';
 import { Input,  Button,  Table, Tag, Space, Col, Row, Divider, 
     Form,
     Radio
@@ -23,8 +23,8 @@ import ConformDialog from './conformDialog';
     
     const [theAddress, settheAddress] = useState("");
     const [pid, setpid] = useState(0);
-    const [projectsPid, setprojectsPid] = useState(0);
-    const [projectsvalue, setprojectsvalue] = useState(0);
+    const [projectsPid, setprojectsPid] = useState();
+    const [projectsvalue, setprojectsvalue] = useState();
 
     const [data, setdata] = useState([]);
     const { count, increment, decrement, tabledata, setTableData, billData, setDillData } = useCounterStore();
@@ -45,18 +45,26 @@ import ConformDialog from './conformDialog';
     //     );  
     //   }; 
 
+    // 账单数据展示
     const DataDisplay = ({ data }) => {
       return (
           <div>
               {data.map((item, index) => (
                   <div key={index}>
-                    <Space>
+                    <Space align='baseline' split={<Divider type="vertical" />}>
                       <a>Capital: {item.capital}; </a> 
                       <a>Interest: {item.interest}; </a>
                       <a>Project ID: {item.projectId}; </a>
                       <a>Repaid: {item.repaid}; </a>
-                      <a>Status: {item.status}; </a>
+                      {/* <a>Status: {item.status === '2' ? 'payed' : item.status === '1' ? 'wait' : '未知状态'}</a> */}
                       <a>Repay Time: {new Date(item.repayTime * 1000).toLocaleString()}.</a>
+                      {item.status === '2'? (
+                          <Tag color='green'>payed</Tag>
+                        ) : item.status === '1'? (
+                          <Tag color='blue'>waiting</Tag>
+                        ) : (
+                          <a>未知状态</a>
+                        )}
                     </Space>
                   </div>
               ))}
@@ -77,6 +85,7 @@ import ConformDialog from './conformDialog';
       //   console.log("name:", values.name)
       // };
 
+      // 提交筹款信息
       const onFinish = async (values) => {
         console.log('Received values of form: ', values); // 处理表单数据
         await createProject(values.amount, values.rate, values.term, values.endtime, values.repayMethod);
@@ -190,18 +199,26 @@ import ConformDialog from './conformDialog';
         },
         {
           title: 'Action',
-          render: (text, record) => (
-            <Button type="link" onClick={async () => {
-              console.log(record.amount, record.pid);
-              await setSelectedRowData(record.pid);
-              setTimeout(() => {
-                console.log(selectedRowData);
-              }, 1000);
-              setVisibleDialog(true);
-            }}>
-              出资
-            </Button>
-          ),
+          render: (text, record) => {
+            const isEligible = record.amount > record.collected;
+          
+            if (isEligible) {
+              return (
+                <Button type="link" onClick={async () => {
+                  console.log(record.amount, record.pid);
+                  await setSelectedRowData(record.pid);
+                  setTimeout(() => {
+                    console.log(selectedRowData);
+                  }, 1000);
+                  setVisibleDialog(true);
+                }}>
+                  出资
+                </Button>
+              );
+            } else {
+              return <Tag color='green'>已筹满</Tag>;
+            }
+          }
         },
         {
           title: 'Pid',
@@ -235,26 +252,45 @@ import ConformDialog from './conformDialog';
         getAllProjects();
       }, [0]);
 
+      // useEffect(()=>{
+      //   setTimeout(()=>{
+      //     const active = connector.activate();
+      //     active.then(()=>{
+      //       // console.log("active",r);
+      //     });
+      //     getAllProjects();
+      //   },1000)
+      // },0)
 
-      useEffect(() => {
+      // useEffect(() => {
+      //   getAllProjects()
         // 从 localStorage 中读取 tabledata 并更新状态
-        const storedtabledata = localStorage.getItem('tabledata');
-        if (storedtabledata !== null) {
-          const parsedData = JSON.parse(storedtabledata);
-          setTableData(parsedData);
-        }
-      }, []);
+        // const storedtabledata = localStorage.getItem('tabledata');
+        // if (storedtabledata !== null) {
+        //   const parsedData = JSON.parse(storedtabledata);
+        //   setTableData(parsedData);
+        // }
+      // }, []);
 
-      useEffect(() => {
-        console.log("allProjects: ", allProjects, "data :", data);
-        // setTableData(allProjects);
-        if (tabledata.length > 0) {
+      // useEffect(() => {
+      //   // 从 localStorage 中读取 tabledata 并更新状态
+      //   const storedtabledata = localStorage.getItem('tabledata');
+      //   if (storedtabledata !== null) {
+      //     const parsedData = JSON.parse(storedtabledata);
+      //     setTableData(parsedData);
+      //   }
+      // }, []);
 
-          localStorage.setItem('tabledata', JSON.stringify(tabledata)); // 将索引存储到 localStorage
-          console.log("tabledata:", tabledata)
-        }
+      // useEffect(() => {
+      //   console.log("allProjects: ", allProjects, "data :", data);
+      //   // setTableData(allProjects);
+      //   if (tabledata.length > 0) {
 
-      }, [tabledata]);
+      //     localStorage.setItem('tabledata', JSON.stringify(tabledata)); // 将索引存储到 localStorage
+      //     console.log("tabledata:", tabledata)
+      //   }
+
+      // }, [tabledata]);
 
       // onClick={
       //   async ()=>{
@@ -266,7 +302,11 @@ import ConformDialog from './conformDialog';
     return (
         <Web3Provider>
             <Navigate/>
-
+            <motion.div
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               transition={{ duration: 1 }}
+           >
           <Row>
           <Col span={1}>
             </Col>
@@ -294,16 +334,21 @@ import ConformDialog from './conformDialog';
           <Col span={22}></Col>
             <Col span={1}>
 
-            <Button 
-                        onClick={
-                          async ()=>{
-                            console.log("theAddress to solidity : ", projectsPid)
-                            await getAllProjects();
-                            }} 
-                            type="primary" size="middle">
-                        刷新列表
-                    
-            </Button>
+              <motion.div
+                whileHover={{ scale: [null, 1.1, 1.08] }} // 鼠标悬停时放大到1.1倍
+                transition={{ ease: "easeOut", duration: 0.3 }} // 动画过渡方式：easeOut缓动，持续时间0.3s
+              >
+              <Button 
+              onClick={
+                async ()=>{
+                  console.log("theAddress to solidity : ", projectsPid)
+                  await getAllProjects();
+                  }} 
+                  type="primary" size="middle">
+                    刷新列表
+              </Button>
+
+            </motion.div>
               </Col>
             </Row>
             
@@ -313,6 +358,8 @@ import ConformDialog from './conformDialog';
             <Row>
           <Col span={2}></Col>
             <Col span={5}>
+
+
             <Divider 
             orientation="left"  
             style={{
@@ -322,12 +369,23 @@ import ConformDialog from './conformDialog';
             </Divider>
 
             </Col>
+            <Col span={5}/>
+            <Col span={9}>
+            <Divider 
+            orientation="left"  
+            style={{
+            borderColor: '#7cb305',
+            }}>
+            <h3>查看账单</h3>
+            </Divider>
+            </Col>
             </Row>
 
             <Row>
           <Col span={1}></Col>
-            <Col span={11}>
-           
+            <Col span={6}>
+            <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '8px' }}>
+
             <Form
                 labelCol={{
                     span: 4,
@@ -383,48 +441,67 @@ import ConformDialog from './conformDialog';
                 </Form.Item> */}
 
                 <Form.Item label="Commit">
+                  <motion.div
+                  whileHover={{ scale: [null, 1.05, 1.03] }} // 鼠标悬停时放大到1.1倍
+                  transition={{ ease: "easeOut", duration: 0.3 }} // 动画过渡方式：easeOut缓动，持续时间0.3s
+                  >
                     <Button color="primary" variant="outlined" htmlType="submit">Commit</Button>
+                  </motion.div>
                 </Form.Item>
                 </Form>
+                </div>
                 </Col>
+                <Col span={5}></Col>
 
-                <Col span={11}>
+                {/* 账单 */}
+                <Col span={10}>
+                <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '8px' }}>
 
-  
-                    获取单个项目账单  :
+                  <Space>
+
                     <Input
-                        placeholder="pid"
+                        placeholder="项目ID"
                         type="text"
                         value={projectsPid}
                         onChange={(e) => setprojectsPid(e.target.value)}
                         className={styles.input}
+                        style={{ width: '100px' }}
                     />
-                     {/* <Input
-                      placeholder="value"
-                        type="text"
-                        value={projectsvalue}
-                        onChange={(e) => setprojectsvalue(e.target.value)}
-                        className={styles.input}
-                    /> */}
-                        <Button 
-                        onClick={
-                            async ()=>{
-                              console.log("theAddress to solidity : ", projectsPid)
-                                await getBill(projectsPid);
-                            }} 
-                        type="primary" size="middle">
-                        查看账单
-                    
+                      <motion.div
+                        whileHover={{ scale: [null, 1.02, 1.01] }} // 鼠标悬停时放大到1.1倍
+                        transition={{ ease: "easeOut", duration: 0.3 }} // 动画过渡方式：easeOut缓动，持续时间0.3s
+                      >
+                      <Button 
+                      onClick={
+                          async ()=>{
+                            console.log("theAddress to solidity : ", projectsPid)
+                              await getBill(projectsPid);
+                          }} 
+                      type="primary" size="middle">
+                      查看账单
                     </Button>
+                    </motion.div>
+                  </Space>
+
                     <DataDisplay data={billData} />
 
-                    还款 :
+                    <Divider 
+                      orientation="left"  
+                      style={{
+                      borderColor: '#7cb305',
+                      }}>
+                      <h3>还款</h3>
+                      </Divider>
+                      <Space>
+
                     <Input
-                        placeholder="pid"
+                        placeholder="项目ID"
                         type="text"
                         value={projectsPid}
                         onChange={(e) => setprojectsPid(e.target.value)}
                         className={styles.input}
+                        style={{ width: '100px' }}
+
                     />
                      <Input
                       placeholder="repay value"
@@ -432,7 +509,13 @@ import ConformDialog from './conformDialog';
                         value={projectsvalue}
                         onChange={(e) => setprojectsvalue(e.target.value)}
                         className={styles.input}
+                        style={{ width: '200px' }}
+
                     />
+                      <motion.div
+                        whileHover={{ scale: [null, 1.02, 1.01] }} // 鼠标悬停时放大到1.1倍
+                        transition={{ ease: "easeOut", duration: 0.3 }} // 动画过渡方式：easeOut缓动，持续时间0.3s
+                      >
                         <Button 
                         onClick={
                             async ()=>{
@@ -443,9 +526,14 @@ import ConformDialog from './conformDialog';
                         还款
                     
                     </Button>
+                    </motion.div>
+                    </Space>
+
+                    </div>
                 </Col>
 
             </Row>
+            </motion.div>
 
 
                   
