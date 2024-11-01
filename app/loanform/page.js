@@ -42,6 +42,7 @@ import { format, fromUnixTime } from 'date-fns';
         duration: duration,
         style: {
           marginTop: '4vh',
+          color: 'hsl(73, 91%, 41%)', // 设置文本颜色
         },
       });
     };
@@ -468,6 +469,8 @@ import { format, fromUnixTime } from 'date-fns';
         },
       ];
       // zustand data
+    
+
     return (
         <Web3Provider>
         {contextHolder}
