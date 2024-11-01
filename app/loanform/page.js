@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Input,  Button,  Table, Tag, Space, Col, Row, Divider, Tabs,
-    Form, Radio } from "antd";
+import { Input,  Button,  Table, Tag, Space, Col, Row, Divider, Tabs, message,
+    Form, Radio, DatePicker } from "antd";
 import styles from "./page.module.css";
 import { Web3Provider } from '../Web3Provider.jsx'
 import { useContract } from '../useContract';
@@ -11,8 +11,8 @@ import Navigate from '../navigate/navigate';
 import useCounterStore from '../../store/useStore';
 import InputDialog from './InputDialog';
 import { useWeb3React } from '@web3-react/core';
+import { format, fromUnixTime } from 'date-fns';
 
-// import StarBackground from '../particles/ParticleBackground';
 
 
   
@@ -23,11 +23,36 @@ import { useWeb3React } from '@web3-react/core';
     const [projectsvalue, setprojectsvalue] = useState();
 
     // const [data, setdata] = useState([]);
-    const {   tabledata,  billData } = useCounterStore();
+    const { tabledata,  billData,
+            msgType, msgContent, msgDuration } = useCounterStore();
     // 连接钱包
     const { isActive, account,  connector,  provider } = useWeb3React();
     // 合约调用
     const { createProject,  getAllProjects, allProjects, contribute, getBill, repay } = useContract();
+
+    // message 提示信息
+    const [messageApi, contextHolder] = message.useMessage();
+    const [isFirstRender, setIsFirstRender] = useState(true);
+    const key = 'updatable';
+    const openMessage = (type, content, duration) => {
+      messageApi.open({
+        key,
+        type: type,
+        content: content,
+        duration: duration,
+        style: {
+          marginTop: '4vh',
+        },
+      });
+    };
+
+    useEffect(() => {
+      if (!isFirstRender) {
+        console.log("message info : ", msgType, msgContent, msgDuration );
+        openMessage(msgType, msgContent, msgDuration);
+        }
+        setIsFirstRender(false);
+    }, [msgType, msgContent, msgDuration]);
 
     // const ListComponent = ({ data }) => {  
     //     console.log("处理数据：", data)
@@ -85,7 +110,12 @@ import { useWeb3React } from '@web3-react/core';
       // 提交筹款信息
       const onFinish = async (values) => {
         console.log('Received values of form: ', values); // 处理表单数据
-        await createProject(values.amount, values.rate, values.term, values.endtime, values.repayMethod);
+        if (values.endtime) {
+          const dateStr = values.endtime.$d;
+          const dates = new Date(dateStr);
+          const timeStr = Math.floor(dates.getTime() / 1000);
+          await createProject(values.amount, values.rate, values.term, timeStr, values.repayMethod);
+        }
       };
 
       // 出资对话框
@@ -164,15 +194,26 @@ import { useWeb3React } from '@web3-react/core';
           title: 'Status',
           key: 'status',
           dataIndex: 'status',
-          render: (status) => {
+          render: (status, record) => {
+            const isEspired = parseInt(record.collectEndTime * 1000, 10) < Date.now();
+            const isEligible = parseInt(record.amount) > parseInt(record.collected);
             const { text, color } = statusMapping[status] || { text: '未知状态', color: 'black' };
+            if ( ! isEligible) {
             return <Tag color={color}>{text}</Tag>;
+            } 
+            if (isEligible && isEspired) {
+              return <Tag color='gray'>已过期</Tag>;
+            } 
+            else {
+              return <Tag color={color}>{text}</Tag>;
+            }
           },
         },
         {
           title: 'CollectEndTime',
           dataIndex: 'collectEndTime',
           key: 'collectEndTime',
+          render: (record) => <a>{format(new Date(record * 1000), 'yyyy-MM-dd HH:mm')}</a>,
         },
         {
           title: 'collected',
@@ -197,9 +238,13 @@ import { useWeb3React } from '@web3-react/core';
         {
           title: 'Action',
           render: (text, record) => {
+            const isEspired = parseInt(record.collectEndTime * 1000, 10) < Date.now();
             const isEligible = parseInt(record.amount) > parseInt(record.collected);
           
             if (isEligible) {
+              if (isEspired) {
+                return <Tag color='gray'>已过期</Tag>;
+              } else {
               return (
                 <Button type="link" onClick={async () => {
                   console.log(record.amount, record.pid);
@@ -211,7 +256,7 @@ import { useWeb3React } from '@web3-react/core';
                 }}>
                   出资
                 </Button>
-              );
+              )};
             } else {
               return <Tag color='green'>已筹满</Tag>;
             }
@@ -237,10 +282,20 @@ import { useWeb3React } from '@web3-react/core';
       useEffect(() => {
         console.log("useEffect: ", allProjects, );
         getAllProjects();
-      }, [isActive, account,  connector,  provider]);
+      }, [isActive, account,  connector,  provider, msgType, msgContent]);
  
       // 标签页 定义筹款页面
       function tabPageLoan() {
+      //   const handleDateChange = (date, dateString) => {
+      //     if (date) {
+      //       const dateStr = date.$d;
+      //       const dates = new Date(dateStr);
+      //       const timestamp = Math.floor(dates.getTime() / 1000);
+      //       console.log('10 位时间戳:', timestamp);
+      //         // const timestamp = Math.floor(date.getTime() / 1000);
+      //         // console.log('10位时间戳:', timestamp);
+      //     }
+      // };
         return (          
         <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '8px' }}>
 
@@ -290,9 +345,14 @@ import { useWeb3React } from '@web3-react/core';
             <Form.Item label="term/month" name="term">
                 <Input placeholder="Month Num"/>
             </Form.Item>
-            <Form.Item label="Endtime" name="endtime">
+            {/* <Form.Item label="Endtime" name="endtime">
                 <Input placeholder="endtime stamp"/>
+            </Form.Item> */}
+            <Form.Item label="Endtime" name="endtime">
+                {/* <DatePicker onChange={handleDateChange} /> */}
+                <DatePicker  />
             </Form.Item>
+
             <Form.Item label="RepayMethod" name="repayMethod">
                 <Input placeholder="repayMethod"/>
             </Form.Item>
@@ -323,6 +383,7 @@ import { useWeb3React } from '@web3-react/core';
       function tabPageRepay() {
         return (
                 <div style={{ backgroundColor: 'white', padding: '15px', borderRadius: '8px' }}>
+                  {contextHolder}
                   <Divider 
                   orientation="left"  
                   style={{
@@ -365,16 +426,6 @@ import { useWeb3React } from '@web3-react/core';
                       <h3>还款</h3>
                       </Divider>
                       <Space>
-
-                      <Input
-                          placeholder="项目ID"
-                          type="text"
-                          value={projectsPid}
-                          onChange={(e) => setprojectsPid(e.target.value)}
-                          className={styles.input}
-                          style={{ width: '100px' }}
-
-                      />
                      <Input
                       placeholder="repay value"
                         type="text"
@@ -419,6 +470,7 @@ import { useWeb3React } from '@web3-react/core';
       // zustand data
     return (
         <Web3Provider>
+        {contextHolder}
             <Navigate/>
             <motion.div
                initial={{ opacity: 0 }}
@@ -486,11 +538,13 @@ import { useWeb3React } from '@web3-react/core';
         {/* </main> */}
         {/* </div> */}
           </motion.div>
+
         </Web3Provider>
     )  
 }
 
 export default function Vote() {
+
     return (
         <Web3Provider>
             <Vote_o/>

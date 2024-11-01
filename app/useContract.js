@@ -36,7 +36,16 @@ export function useContract(){
         currentBill: 0
     });
 
-    const {  tabledata, setTableData, billData, setBillData } = useCounterStore();
+    const {  tabledata, setTableData, billData, setBillData,
+            msgType, setMsgType, msgContent, setMsgContent, msgDuration, setMsgDuration } = useCounterStore();
+    
+    // update message
+    const updateMessage = (type, content, duration) => {
+        setMsgType(type);
+        setMsgContent(content);
+        setMsgDuration(duration);
+    }
+
 
     // useEffect(()=>{
     //     const signer = provider.getSigner();
@@ -75,10 +84,20 @@ export function useContract(){
             return;
         }
         const contract = new Contract(tokenAddress, ABI.abi, signer);
-        await contract.createProject(amount, rate, term, collectEndTime, repayMethod);
+        await contract.createProject(amount, rate, term, collectEndTime, repayMethod)
+        .then((transactionResponse) => {
+            console.log('Transaction hash:', transactionResponse.hash);
+            updateMessage('loading', '提交进行中..', 0);
+            return transactionResponse.wait();
+          }).then((transactionReceipt) => {
+            console.log('Transaction receipt:', transactionReceipt);
+            updateMessage('success', '提交完成', 2);
+          }).catch((error) => {
+            console.error('Error:', error);
+            updateMessage('error', '提交失败', 2);
+          });
     }
 
-    
     // 出资 contribute
     const contribute = async (projectsPid, projectsvalue)=>{
         const signer = provider.getSigner();
@@ -89,14 +108,14 @@ export function useContract(){
         await contract.contribute(projectsPid, { from: account, value: projectsvalue })
          .then((transactionResponse) => {
             console.log('Transaction hash:', transactionResponse.hash);
-            message.success('交易已发起');
+            updateMessage('loading', '交易进行中..', 0);
             return transactionResponse.wait();
           }).then((transactionReceipt) => {
             console.log('Transaction receipt:', transactionReceipt);
-            message.success('交易成功。');
+            updateMessage('success', '交易完成', 2);
           }).catch((error) => {
             console.error('Error:', error);
-            message.error('交易失败：' + error.message);
+            updateMessage('error', '交易失败', 2);
           });
     }
 
