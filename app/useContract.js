@@ -7,11 +7,11 @@ import useCounterStore  from '../store/useStore';
 import * as web3 from 'web3'
 
 // const tokenAddress = '0xA51926D9B32622ee286cCfB41dBb53FB962E074E';
-// const tokenAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+const tokenAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 
 // sikaiwei dev
 // 2024年10月28日
-const tokenAddress = '0xe4b1cE541bEb0D48b737057819E4266596299fA0';
+// const tokenAddress = '0xe4b1cE541bEb0D48b737057819E4266596299fA0';
 // const tokenAddress = '0x8765C1e53c2Db3d2F9c3d631a86A568dDc6074Bc';
 
 
