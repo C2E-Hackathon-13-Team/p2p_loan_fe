@@ -21,11 +21,16 @@ const useCounterStore = create((set) => ({
     // 存储单个项目账单数据 
     billData: [],  
     setBillData: (newData) => (
-        // console.log(newData);
-        
         set((state) => ({ 
           billData: newData 
     }))),  
+    // message info
+    msgType: 'info',
+    setMsgType: (str) => set((state) => ({ msgType: str })),
+    msgContent: 'loading',
+    setMsgContent: (str) => set((state) => ({ msgContent: str })),
+    msgDuration: 0.01,
+    setMsgDuration: (num) => set((state) => ({ msgDuration: num })),
 }));
 
 export default useCounterStore;

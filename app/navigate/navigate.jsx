@@ -26,10 +26,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from "./navigate.module.css"; // 确保路径正确
-import { UserOutlined } from '@ant-design/icons';
 import { Avatar,  Button, Flex } from 'antd';
 import { useWeb3React } from '@web3-react/core';
-import { motion } from 'framer-motion';
 // import { useContract } from '../useContract';
 
 export default function Navigate() {

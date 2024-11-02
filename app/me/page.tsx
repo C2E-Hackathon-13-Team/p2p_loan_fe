@@ -7,12 +7,12 @@ import styles  from  './page.module.scss';
 import { useContract } from '../useContract.js'
 import { useEffect } from 'react';
 import { TransactionOutlined,CloseCircleOutlined,FastForwardOutlined,RiseOutlined  } from '@ant-design/icons';
-import { Avatar, Card, Flex, Switch,Tabs,Modal,Button,Space     } from 'antd';
+import {  Card, Flex, Tabs,Modal,Button,Space } from 'antd';
 import type { TabsProps } from 'antd';
 import React, { useState } from 'react';
 import * as web3 from 'web3'
 import { format } from 'date-fns';
-import { pl } from 'date-fns/locale';
+// import { pl } from 'date-fns/locale';
 import { Table } from "antd" ;
 import type { InputNumberProps } from 'antd';
 import { InputNumber } from 'antd';
@@ -20,7 +20,7 @@ import { motion } from 'framer-motion';
 
 function Me(){
     // 连接钱包
-    const { isActive, account,  connector,  provider } = useWeb3React();
+    const { isActive, account } = useWeb3React();
     // 用户发起的项目  和 用户出资的项目
     const { launchProjects,refreshLaunchProjects,contributeProjects, refreshContributeProjects,revocateProject,confirmProject,getBillsByPid,repayProject,getContributionsByPid } = useContract()
 
@@ -35,14 +35,42 @@ function Me(){
     const [isRepayModalOpen, setIsRepayModalOpen] = useState(false);
     const [isInvestInfoModalOpen, setIsInvestInfoModalOpen] = useState(false);
 
+    // const bills = await getBillsByPid(pid)
+    // bills.forEach((b,i)=>{
+    //     b.key = i;
+    //     b.capital = formatAmount(b.capital);
+    //     b.interest = formatAmount(b.interest);
+    //     b.repaid = formatAmount(b.repaid);
+    //     b.status = getBillStatus(b);
+    //     b.repayTime = format(new Date(b.repayTime * 1000), 'yyyy-MM-dd HH:mm:ss');
+    // })
+    // setBillDataSource(bills)
+
+    interface BillData {
+        key: number;
+        capital: string;
+        interest: string;
+        repaid: string;
+        status: string;
+        repayTime: string;
+      }
+    
+      interface InvestData {
+        key: number;
+        amount: string;
+        investor: string;
+        repaid: string;
+        time: string;
+      }
+
     //当前项目ID
-    const [selectedProject, setSelectedProject] = useState<BigInt>(BigInt(0));
+    const [selectedProject, setSelectedProject] = useState<bigint>(BigInt(0));
     //账单数据
-    const [billDataSource, setBillDataSource] = useState<any[]>([]);
+    const [billDataSource, setBillDataSource] = useState<BillData[]>([]);
     //偿还金额
     const [repayAmount, setRepayAmount] = useState<number>(0);
     //投资信息
-    const [investDataSource, setInvestDataSource] = useState<any[]>([]);
+    const [investDataSource, setInvestDataSource] = useState<InvestData[]>([]);
 
     
 
@@ -53,6 +81,7 @@ function Me(){
         return `${start}...${end}`; // 用省略号连接
     }
 
+    
 
 
     useEffect(function(){
@@ -73,7 +102,7 @@ function Me(){
 
 
 
-    function getStatusByProject(p:any):string{
+    function getStatusByProject(p):string{
         const current = Math.floor(Date.now() / 1000);
         if( p.status == 1 && current < p.collectEndTime && p.collected < p.amount ){
             return 'Financing';//筹资期
@@ -109,7 +138,7 @@ function Me(){
         await revocateProject(selectedProject)
         setIsRevocateModalOpen(false);
     };
-    const openRevocate = (pid:BigInt) => {
+    const openRevocate = (pid:bigint) => {
         setSelectedProject(pid)
         setIsRevocateModalOpen(true)
     };
@@ -118,13 +147,13 @@ function Me(){
         await confirmProject(selectedProject)
         setIsConfirmModalOpen(false);
     };
-    const openConfirm = (pid:BigInt) => {
+    const openConfirm = (pid:bigint) => {
         setSelectedProject(pid)
         setIsConfirmModalOpen(true)
     };
 
     async function refreshBills(pid){
-        let bills = await getBillsByPid(pid)
+        const bills = await getBillsByPid(pid)
         bills.forEach((b,i)=>{
             b.key = i;
             b.capital = formatAmount(b.capital);
@@ -152,7 +181,7 @@ function Me(){
         }
     }
 
-    const openRepay = async (pid:BigInt) => {
+    const openRepay = async (pid:bigint) => {
         setSelectedProject(pid)
         refreshBills(pid)
         setIsRepayModalOpen(true)
@@ -219,10 +248,10 @@ function Me(){
         
     // }
 
-    const openInvestInfo = async (pid:BigInt) => {
+    const openInvestInfo = async (pid:bigint) => {
         setSelectedProject(pid)
 
-        let cons = await getContributionsByPid(pid)
+        const cons = await getContributionsByPid(pid)
         
         cons.forEach((c,i)=>{
             c.key = i;
@@ -239,7 +268,7 @@ function Me(){
 
 
     function getActionDoc(p): React.ReactNode[]{
-        let result:React.ReactNode[] = [];
+        const result:React.ReactNode[] = [];
 
         if(tabKey == '1'){//我发起的项目
 
@@ -404,8 +433,10 @@ function Me(){
         <Row>
             <Col span={4}></Col>
             <Col span={16}>
+            <div style={{ backgroundColor: 'white', marginTop: '8px', padding: '15px', borderRadius: '8px' }}>
                 <span className={styles.addrHead} >{truncateStr(account || '')}</span>
                 <Tabs defaultActiveKey={tabKey} items={items} onChange={(key)=>setTabKey(key)} />
+            </div>
             </Col>
             <Col span={4}></Col>
         </Row>
