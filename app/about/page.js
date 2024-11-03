@@ -35,9 +35,18 @@ function Vote_o() {
         <main className={styles.main}>
 
         {/* <StarBackground/> */}
-            <h1 style={{ color: 'white' }}>Loan</h1>
 
-            <label style={{ color: 'white' }}>
+            <motion.div style={{ color: 'white' }} 
+                  whileHover={{
+                    color: "black",
+                    transition: {
+                        duration: 0.3, // 颜色变化的持续时间为0.3秒
+                        delay: 0.1 // 延迟0.1秒后开始颜色变化
+                    }
+                }}
+
+            >
+                <h1 >Loan</h1>
             Web3 P2P借贷平台是一种基于Web3技术和区块链的去中心化金融服务平台，它结合了P2P借贷和Web3技术的优势，为用户提供了更加安全、透明和高效的借贷服务。
 
 <h2>一、平台概述</h2>
@@ -64,7 +73,7 @@ Web3 P2P借贷平台是一个基于区块链技术的点对点金融借贷平台
 <h4>
     综上所述，Web3 P2P借贷平台以其去中心化、透明和安全的技术特点，以及降低交易成本、提高资金利用效率、增强交易透明度和保障用户权益的平台优势，为用户提供了更加便捷、高效和安全的借贷服务。
 </h4>       
-            </label>
+            </motion.div>
 
  
 

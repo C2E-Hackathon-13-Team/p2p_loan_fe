@@ -1,7 +1,7 @@
 // import './App.css'
 import { useWeb3React } from '@web3-react/core';
 import { useState, useEffect } from 'react';
-// import {motion} from 'framer-motion';
+import {motion} from 'framer-motion';
 import  TypingEffect from './daziji'; // 假设你将上面的组件保存在TypingMachine文件中
 
 // import { useContract } from '../useContract';
@@ -59,9 +59,9 @@ function App() {
 
 
 
-{show && <h1 style={{ color: 'white' }}>
+{show && <motion.h1 style={{ color: 'white' }} whileHover={{ color: "black" }} > 
 <TypingEffect text="p2p loan platform, welcome your comming..." />
-</h1>}
+</motion.h1>}
 
   {/* <motion.div
       initial={{ x: 0 }}

@@ -31,7 +31,8 @@ import { useWeb3React } from '@web3-react/core';
 // import { useContract } from '../useContract';
 
 export default function Navigate() {
-    const [activeIndex, setActiveIndex] = useState(0); // 假设默认首页是激活的
+    // const [activeIndex, setActiveIndex] = useState(0); // 假设默认首页是激活的
+    const [activeIndex, setActiveIndex] = useState(); // 假设默认首页是激活的
 
     useEffect(() => {
         // 从 localStorage 中读取 activeIndex 并更新状态
