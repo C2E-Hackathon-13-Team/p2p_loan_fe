@@ -444,11 +444,6 @@ function Me(){
 }
 
 export default function MeExport(){
-    
-
-
-
-
     return (
         <Web3Provider>
             <Navigate/>
