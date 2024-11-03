@@ -98,7 +98,8 @@ export default function Navigate() {
                 {/* connect wallet */}
             </Button>
 
-            <Avatar src={<img src="/header.jpg" alt="avatar" />} />
+            {/* <Avatar src={<img src="/header.jpg" alt="avatar" />} /> */}
+            <Avatar src={<img src="/motion2.gif" alt="avatar" />} />
             </Flex>
         </nav>
     );
