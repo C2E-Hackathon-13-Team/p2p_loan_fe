@@ -5,7 +5,7 @@ import { useWeb3React } from '@web3-react/core';
 import { useState, useEffect } from 'react';
 import useCounterStore  from '../store/useStore';
 import * as web3 from 'web3';
-import { message } from 'antd';
+// import { message } from 'antd';
 
 
 // const tokenAddress = '0xA51926D9B32622ee286cCfB41dBb53FB962E074E';
@@ -37,7 +37,7 @@ export function useContract(){
     });
 
     const {  tabledata, setTableData, billData, setBillData,
-            msgType, setMsgType, msgContent, setMsgContent, msgDuration, setMsgDuration } = useCounterStore();
+             setMsgType, setMsgContent, setMsgDuration } = useCounterStore();
     
     // update message
     const updateMessage = (type, content, duration) => {

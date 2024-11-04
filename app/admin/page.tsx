@@ -1,7 +1,6 @@
 "use client"
 import { Web3Provider } from '../Web3Provider.jsx'
-import { motion } from 'framer-motion';
-import { Button, Input, Select, Space } from 'antd';
+import { Button, Input, } from 'antd';
 import React, { useState } from 'react';
 
 
