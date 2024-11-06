@@ -9,7 +9,6 @@ const ImageBackground = () => {
         left: 0,
         width: '100%',
         height: '100%',
-        // backgroundImage: `url(/7-2.jpg),url(/7-1.jpg)`,
         backgroundImage: `url(/7-1.jpg),url(/7-2.jpg)`,
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',

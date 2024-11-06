@@ -310,13 +310,24 @@ export function useContract(){
         }
         const contract = new Contract(tokenAddress, ABI.abi, signer);
         await contract.repay(projectsPid, { from: account, value: projectsvalue })
+        // .then((transactionResponse) => {
+        // console.log('Transaction hash:', transactionResponse.hash);
+        // return transactionResponse.wait();
+        // }).then((transactionReceipt) => {
+        // console.log('Transaction receipt:', transactionReceipt);
+        // }).catch((error) => {
+        // console.error('Error:', error);
+        // });
         .then((transactionResponse) => {
         console.log('Transaction hash:', transactionResponse.hash);
+        updateMessage('loading', '交易进行中..', 0);
         return transactionResponse.wait();
         }).then((transactionReceipt) => {
         console.log('Transaction receipt:', transactionReceipt);
+        updateMessage('success', '交易完成', 2);
         }).catch((error) => {
         console.error('Error:', error);
+        updateMessage('error', '交易失败', 2);
         });
     }
 
