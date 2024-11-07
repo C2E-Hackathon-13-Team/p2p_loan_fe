@@ -18,22 +18,6 @@ import * as web3 from 'web3';
 const tokenAddress = '0x888bbB30c304c609D44A785cF7c01f8D34883869'; // 增加事件监听
 
 
-export function getContract() {
-    // const { active, library, account } = useWeb3React();
-    // let contract;
-    // if (active && library) {
-    //     contract = new Contract(contractAddress, contractABI, library.getSigner(account));
-    // }
-    // return contract;
-
-    const {provider, account} = useWeb3React();
-    if(!provider){
-        return;
-    }
-    const signer = provider.getSigner();
-    const contractLs = new Contract(tokenAddress, ABI.abi, signer);
-    return contractLs;
-}
 
 
 // // 发布筹款 
@@ -101,9 +85,17 @@ export function useContract(){
 
 
 
-    // 合约事件监听
-    // const contractLs = getContract();
-    const contractLs = useMemo(() => getContract(), []);
+    // // 合约事件监听
+    const contractLs = useMemo(() => {
+    if (!provider) {
+        return null;
+    }
+    const signer = provider.getSigner();
+    return new Contract(tokenAddress, ABI.abi, signer);
+    }, [provider]);
+
+    // // const contractLs = getContract();
+    // const contractLs = useMemo(() => getContract(), []);
 
     useEffect(() => {
         if (contractLs) {
