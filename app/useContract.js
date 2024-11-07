@@ -2,7 +2,7 @@
 import { Contract} from '@ethersproject/contracts';
 import ABI from '../artifacts/contracts/GLD.sol/LockModule#Loan.json';
 import { useWeb3React } from '@web3-react/core';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import useCounterStore  from '../store/useStore';
 import * as web3 from 'web3';
 // import { message } from 'antd';
@@ -13,8 +13,41 @@ import * as web3 from 'web3';
 
 // sikaiwei dev
 // 2024年10月28日
-const tokenAddress = '0xe4b1cE541bEb0D48b737057819E4266596299fA0';
+// const tokenAddress = '0xe4b1cE541bEb0D48b737057819E4266596299fA0';
 // const tokenAddress = '0x8765C1e53c2Db3d2F9c3d631a86A568dDc6074Bc';
+const tokenAddress = '0x888bbB30c304c609D44A785cF7c01f8D34883869'; // 增加事件监听
+
+
+export function getContract() {
+    // const { active, library, account } = useWeb3React();
+    // let contract;
+    // if (active && library) {
+    //     contract = new Contract(contractAddress, contractABI, library.getSigner(account));
+    // }
+    // return contract;
+
+    const {provider, account} = useWeb3React();
+    if(!provider){
+        return;
+    }
+    const signer = provider.getSigner();
+    const contractLs = new Contract(tokenAddress, ABI.abi, signer);
+    return contractLs;
+}
+
+
+// // 发布筹款 
+//  export const getContract = async ()=>{
+//     const signer = provider.getSigner();
+//     if(!provider){
+//         return;
+//     }
+//     const contract = new Contract(tokenAddress, ABI.abi, signer);
+//     return contract;
+
+// }
+
+
 
 
 export function useContract(){
@@ -68,6 +101,35 @@ export function useContract(){
 
 
 
+    // 合约事件监听
+    // const contractLs = getContract();
+    const contractLs = useMemo(() => getContract(), []);
+
+    useEffect(() => {
+        if (contractLs) {
+            // contract.on('MyEvent', (param1, param2,...) => {
+            //     // 当事件触发时，这里的代码会执行
+            //     console.log('MyEvent triggered with params:', param1, param2);
+            // });
+        
+            // 监听合约事件
+            contractLs.on('updateProject', (projects) => {
+            console.log('Adding event listener for updateProject inner 1');
+            console.log('Received updateProject event:', projects);
+            console.log('Adding event listener for updateProject inner 2');
+            });
+
+        }
+        return () => {
+            if (contractLs) {
+                // 清理事件监听器，避免内存泄漏
+                contractLs.off('updateProject');
+            }
+        };
+    }, [contractLs]);
+
+
+
     //   useEffect(() => {
     //     // 从 localStorage 中读取 tabledata 并更新状态
     //     const storedtabledata = localStorage.getItem('tabledata');
@@ -92,6 +154,8 @@ export function useContract(){
           }).then((transactionReceipt) => {
             console.log('Transaction receipt:', transactionReceipt);
             updateMessage('success', '提交完成', 2);
+
+
           }).catch((error) => {
             console.error('Error:', error);
             updateMessage('error', '提交失败', 2);

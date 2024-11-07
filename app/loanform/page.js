@@ -6,13 +6,12 @@ import { Input,  Button,  Table, Tag, Space, Col, Row, Divider, Tabs, message,
     Form, Radio, DatePicker } from "antd";
 import styles from "./page.module.css";
 import { Web3Provider } from '../Web3Provider.jsx'
-import { useContract } from '../useContract';
+import { useContract, getContract } from '../useContract';
 import Navigate from '../navigate/navigate';
 import useCounterStore from '../../store/useStore';
 import InputDialog from './InputDialog';
 import { useWeb3React } from '@web3-react/core';
 import { format } from 'date-fns';
-
 
 
   
@@ -54,6 +53,38 @@ import { format } from 'date-fns';
         }
         setIsFirstRender(false);
     }, [msgType, msgContent, msgDuration]);
+
+
+  //   // 合约事件监听
+  //   const contract = getContract();
+  //   useEffect(() => {
+  //     if (contract) {
+  //         // contract.on('MyEvent', (param1, param2,...) => {
+  //         //     // 当事件触发时，这里的代码会执行
+  //         //     console.log('MyEvent triggered with params:', param1, param2);
+  //         // });
+      
+  //           // 监听合约事件
+  //         contract.on('updateProject', (projects) => {
+  //         console.log('Adding event listener for updateProject inner 1');
+  //         console.log('Received updateProject event:', projects);
+  //         console.log('Adding event listener for updateProject inner 2');
+  //         });
+
+  //     }
+  //     return () => {
+  //         if (contract) {
+  //             // 清理事件监听器，避免内存泄漏
+  //             contract.off('updateProject');
+  //         }
+  //     };
+  // }, [contract]);
+
+
+  
+
+
+
 
     // const ListComponent = ({ data }) => {  
     //     console.log("处理数据：", data)
@@ -506,7 +537,7 @@ import { format } from 'date-fns';
                   <Button 
                   onClick={
                     async ()=>{
-                      console.log("theAddress to solidity : ", projectsPid)
+                      console.log("theAddress to solidity : ")
                       await getAllProjects();
                       }} 
                       type="primary" size="middle">
